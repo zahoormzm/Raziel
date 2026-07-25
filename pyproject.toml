@@ -14,13 +14,19 @@ api = ["fastapi>=0.116,<1", "uvicorn>=0.35,<1"]
 # `.[test]` must be sufficient to run `python -m pytest` on its own — that is the
 # workflow documented in README.md and the one CI uses. The suite imports fastapi
 # and starlette's TestClient (which requires httpx) in tests/integration/ and
-# tests/unit/test_verifier_worker.py, and Pillow for evidence-frame validation.
+# tests/unit/test_verifier_worker.py, Pillow for evidence-frame validation, and
+# PyAV for the PTS-labeled evidence-frame extraction test. `av` is already a
+# declared core dependency (requirements/core.lock) and is repeated here so the
+# extra stands alone. It is a real dependency of the code under test, so the fix
+# is to install it rather than skip the test and lose CI coverage of the
+# frame-extraction path.
 test = [
   "pytest>=8.4,<9",
   "fastapi>=0.116,<1",
   "uvicorn>=0.35,<1",
   "httpx>=0.28,<1",
   "pillow>=12,<13",
+  "av>=15.1,<16",
 ]
 
 # The repository is a flat layout with many non-package top-level directories
