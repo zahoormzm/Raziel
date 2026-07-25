@@ -23,3 +23,5 @@ tools/ffmpeg/
 *.egg-info
 build/
 dist/
+site/node_modules/
+site/dist/

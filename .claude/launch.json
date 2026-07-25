@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "raziel-site",
+      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
+      "runtimeArgs": ["site/node_modules/vite/bin/vite.js", "site", "--port", "5183", "--strictPort"],
+      "port": 5183
+    }
+  ]
+}
