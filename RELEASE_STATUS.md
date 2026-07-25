@@ -47,9 +47,9 @@ validation. They are not semantic benchmark results.
 |---|---|---|
 | B1 SigLIP2 | Passed | 600/600 ticks; 22.8325× real time; 129.8599 embed fps; 1.6632 GiB peak VRAM; 600 exact scores in 0.1497 s |
 | B2 Qwen3-VL 4B NF4 | Passed hardware gate | 30 warm calls; 12 s median 15.5680 s; overall p95 24.0117 s; 4.6412 GiB peak; 5.7813 GiB minimum headroom; zero retries/failures/cache hits |
-| B3 Qwen3-VL 8B | Not yet measured | Disabled |
+| B3 Qwen3-VL 8B | Measured; failed the memory gate | 30 warm runs; 12 s median 14.5665 s (ceiling 20 s, passes); overall p95 16.9474 s; 7.9182 GiB peak; **1.3227 GiB minimum headroom against a 1.5 GiB floor**; zero retries/failures/cache hits; 28.57 s cold load. Remains disabled. Per §9.2 the 5070 run was scoped as a feasibility test only, and it answered the question. |
 | B4 native clip embeddings | Not yet measured | Disabled |
-| B5 parser | Passed latency gate | 20 warm varied calls; median 0.000169 s; p95 0.000255 s; zero failures/cache hits |
+| B5 parser | Passed latency gate | 24 warm varied calls; median 0.000182 s; p95 0.000318 s; zero failures/cache hits. Re-run after the Gate G3 parser fixes; no regression. |
 | B6 end to end | Open | Retrieval median 0.0891 s, p95 0.2405 s; one verified vertical slice completed in 20.4086 s; required ten-query verified run not complete |
 | B7 detection/tracklets | Not yet measured | Shadow implementation only |
 
@@ -74,6 +74,28 @@ evidence clip SHA-256 is
 | G7 grounding | Open | Candidate-only safety behavior is tested; the required 20 supported real evidence instances and latency/quality measurement are absent. Grounding remains disabled. |
 | G8 export | Functionally passed on synthetic source | Preview/evidence export, resolver boundaries, source/output hashes, and canonical manifest validation pass. Repeat on the frozen authorized demo archive before release. |
 | G9 dataset | Open | Synthetic seed satisfies structural counts only. Authorized sealed footage, a complete human ledger, ≥40 human-authored families, two real second-author paraphrases per family, real blind agreement/adjudication, and Members 1–3 held-out predictions are required. |
+
+### On the B3 result
+
+The 8B verifier is not a plan change. §9.2 scopes the 5070 run for this model as
+a **feasibility test only**, with the full held-out comparison assigned to a
+5090/cloud run; the test returned a clean negative and the gate held.
+
+It is not moving to the Mac. §9.6 gives the M4 Max the product node — UI, exact
+search, playback, evidence, exports — plus a *separately benchmarked MLX
+fallback verifier* with its own semantic and latency gates. That is a different
+component from the 8B, and residency on the demo machine competes with the
+surface the Mac must serve without the desktop.
+
+The shortfall is small (about 181 MiB) and could be reclaimed by shrinking the
+evidence-frame bundle or the token budget. That is deliberately **not** being
+done now: both trade verification quality for memory, and the size of that trade
+cannot be measured until Gate G9 supplies real footage and labels. §9.4 keeps the
+8B only on the same gate **and** a held-out semantic gain, so the second
+condition is currently unmeasurable regardless.
+
+The 4B primary path retains 5.7813 GiB of headroom, which is the number that
+matters for adding the detector/tracklet lane later.
 
 The selected event operating point is intentionally not frozen:
 `config/operating_point.yaml` remains `not_yet_measured` and all primary
