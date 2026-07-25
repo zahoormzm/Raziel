@@ -59,65 +59,61 @@ them with a clarification. Either is acceptable; silently inverting is not.
 
 ---
 
-## Finding 2 — action lexicon misses gerunds ("placing", "putting")
+## Finding 2 — `ACTION_PATTERNS` gerund coverage is inconsistent
 
-**`g3_13`: "all occurrences of a person placing a box at the gate"** → atoms are
-only `['person', 'gate']`. The action is dropped entirely and the plan is still
-`clear`, so the system would retrieve every person near the gate and present it
-as an answer about *placing a box*.
+> **Correction (2026-07-26).** An earlier revision of this document claimed
+> "there is no `enters`/`leaves` entry in `ACTION_PATTERNS`". **That was wrong** —
+> `enters` and `exits` both exist ([query/parser.py:122-123](../../query/parser.py:122)).
+> The symptom was real but the diagnosis was not. Findings 2, 3 and 4 as
+> originally filed are one root cause, restated here. Anyone who already started
+> on "add enters/leaves" should stop; that is not the fix.
 
-Root cause is in `ACTION_PATTERNS` ([query/parser.py:118](../../query/parser.py:118)):
+Four of the seven action patterns accept `-ing` forms. Three do not:
 
-```
-("places", re.compile(r"\b(?:place|places|placed|put|puts|left|leaves)\b", re.I))
-```
+| Canonical action | Gerund | Matches? |
+|---|---|---|
+| `walks away` | "walking away" | yes |
+| `picks up` | "picking up" | yes |
+| `carries` | "carrying" | yes |
+| `follows` | "following" | yes |
+| **`places`** | **"placing"** | **no** |
+| **`enters`** | **"entering"** | **no** |
+| **`exits`** | **"leaving"** | **no** |
 
-`placing` and `putting` match nothing. `\bput\b` does not match `putting`.
+`walks away` and `picks up` use `(?:s|ed|ing)?`; `carries`/`follows` list the
+`-ing` form explicitly. `places`, `enters` and `exits` list neither.
 
-**Requested:** extend the pattern to the `-ing` forms.
+This single gap produces three of the five unsafe failures:
 
----
+- **`g3_13`** "all occurrences of a person **placing** a box at the gate" → atoms
+  are only `['person', 'gate']`. The action vanishes, the plan stays `clear`, and
+  the system answers "any person near the gate" as though it were the question.
+- **`g3_10`** "someone picks up a bag after **placing** a box" →
+  `temporal_relations = []`. `_extract_temporal`
+  ([query/parser.py:377](../../query/parser.py:377)) needs **two** ACTION atoms;
+  only one survives, so the ordering constraint is never built. The temporal
+  extractor itself is sound — `g3_09` "a person **places** a box before picking
+  up a bag" yields the correct `(places, before, picks_up)`.
+- **`g3_11`** "a person **entering** then later **leaving** with a bag" → zero
+  ACTION atoms, no temporal relation, still `clear`.
 
-## Finding 3 — dropped action silently removes a temporal constraint
+§33 item 6 makes temporal assembly *mandatory* for before/after queries, so a
+dropped ordering constraint means the unordered query is answered and presented
+as the ordered one.
 
-**`g3_10`: "someone picks up a bag after placing a box"** → `temporal_relations = []`.
-
-This is a consequence of Finding 2, not a separate bug in the temporal code.
-`_extract_temporal` ([query/parser.py:377](../../query/parser.py:377)) requires
-**two** ACTION atoms; "placing" is not recognised, so only one action survives
-and the temporal relation is never built.
-
-The temporal extractor itself is sound — "a person **places** a box before
-picking up a bag" (`g3_09`) produces the correct `(places, before, picks_up)`.
-
-What makes this unsafe rather than merely incomplete: the plan still reports
-`clear`. §33 item 6 makes temporal assembly *mandatory* for before/after
-queries, so a dropped ordering constraint means the system answers the
-unordered query and presents it as the ordered one.
-
----
-
-## Finding 4 — no enter/exit actions at all (blocks golden case 5)
-
-**`g3_11`: "a person entering then later leaving with a bag"** → zero ACTION
-atoms, no temporal relation, still `clear`.
-
-There is no `enters`/`leaves` entry in `ACTION_PATTERNS`. (`leaves` appears only
-inside the `places` alternation, where it means *left an object behind*, not
-*departed* — so "leaving" is either unmatched or mis-typed.)
-
-**This one blocks committed work:**
+**`g3_11` blocks committed work:**
 
 - §29 golden case 5 is *cross-window order* — the ten-query suite cannot be
   satisfied from a real parse.
-- §21.2 requires a staged cross-window event, and our recording shot list
-  stages exactly this: an entrance at ~12 min and an exit with the backpack at
-  ~22 min of the Gate G1 hour ([data/footage_shotlist.md](../footage_shotlist.md) §2).
+- Our recording shot list stages exactly this scene: an entrance at ~12 min and
+  an exit with the backpack at ~22 min of the Gate G1 hour
+  ([data/footage_shotlist.md](../footage_shotlist.md) §2).
 
-We are about to record footage for a query the parser cannot currently express.
+We are about to record footage for a query the parser cannot express.
 
-**Requested:** add `enters` and `leaves` (departure sense) as first-class
-actions, distinct from the `places` alternation.
+**Requested:** give `places`, `enters` and `exits` the same `-ing` coverage the
+other four already have. **Read Finding 6 first** — adding forms to `exits`
+without fixing the overlap makes that bug worse.
 
 ---
 
@@ -135,6 +131,44 @@ a frame. A rejection that is bypassable by rephrasing is not a rejection.
 
 **Requested:** treat superlatives (`tallest`, `largest`, `closest`, `most …`) as
 `comparison`, same as `taller than`.
+
+---
+
+## Finding 6 — one verb yields two action atoms, and temporal binds them together
+
+*Found by the repository code review, not by this audit. Recorded here because
+it is in the same code path and must be fixed together with Finding 2.*
+
+`left` and `leaves` appear in **both** the `places` alternation (line 121) and
+the `exits` alternation (line 123):
+
+```
+("places", ... r"\b(?:place|places|placed|put|puts|left|leaves)\b" ...)
+("exits",  ... r"\b(?:exit|exits|exited|leave|leaves|left)\b"      ...)
+```
+
+So the single word "left" produces **two** action atoms at the same character
+offset. Verified:
+
+```
+deterministic_parse("person left the bag then walks away")
+  ACTION atoms : a1='exits', a2='places'   <- both from the one word "left"
+                 a3='walks away'
+  temporal     : (a1, before, a2)
+```
+
+`_extract_temporal` only ever pairs `actions[0]` and `actions[1]`, so it emits an
+ordering constraint **between two readings of the same word**, and the relation
+the user actually asked for — `places` before `walks away` — is never produced.
+
+This interacts directly with Finding 2: adding "leaving" to `exits` increases the
+number of words that double-match. Disambiguate first (e.g. `left`/`leaves`
+resolve to `places` only when a direct object follows, `exits` otherwise), then
+add the gerunds.
+
+**Requested:** make `ACTION_PATTERNS` matches mutually exclusive per source span,
+and have `_extract_temporal` pair actions by span position rather than assuming
+`actions[0]`/`actions[1]` are the two the user related.
 
 ---
 
