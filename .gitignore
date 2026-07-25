@@ -19,3 +19,7 @@ tools/ffmpeg/
 .env
 .env.*
 !.env.example
+*.egg-info/
+*.egg-info
+build/
+dist/
