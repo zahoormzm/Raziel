@@ -315,6 +315,7 @@ class GraphStore:
         )
         self.connection.row_factory = sqlite3.Row
         self.connection.executescript(INGEST_SCHEMA)
+        self._batch_depth = 0
         self.connection.executescript(GRAPH_SCHEMA)
 
     def close(self) -> None:
@@ -332,9 +333,38 @@ class GraphStore:
         with self.connection:
             yield self.connection
 
+    @contextmanager
+    def batch(self) -> Iterator[sqlite3.Connection]:
+        """Group many put_node/put_edge writes into one transaction.
+
+        Committing per row made graph materialisation fsync-bound: a ten-minute
+        source at 1 fps is tens of thousands of independent commits, each with a
+        read-back SELECT. Independent commits also left partial nodes and edges
+        behind when a build failed midway, because the generation was marked
+        'failed' after the rows were already durable.
+        """
+        self._batch_depth += 1
+        try:
+            if self._batch_depth == 1:
+                with self.connection:
+                    yield self.connection
+            else:
+                yield self.connection
+        finally:
+            self._batch_depth -= 1
+
+    @contextmanager
+    def _write(self) -> Iterator[sqlite3.Connection]:
+        """Own the transaction only when not already inside a batch."""
+        if self._batch_depth:
+            yield self.connection
+        else:
+            with self.connection:
+                yield self.connection
+
     def put_node(self, node: EvidenceNode) -> None:
         payload = json.dumps(node.payload, sort_keys=True, separators=(",", ":"))
-        with self.connection:
+        with self._write():
             self.connection.execute(
                 """
                 INSERT INTO evidence_nodes(
@@ -385,7 +415,7 @@ class GraphStore:
 
     def put_edge(self, edge: EvidenceEdge) -> None:
         evidence = json.dumps(edge.evidence, sort_keys=True, separators=(",", ":"))
-        with self.connection:
+        with self._write():
             endpoints = self.connection.execute(
                 """
                 SELECT COUNT(*) FROM evidence_nodes WHERE node_id IN (?,?)

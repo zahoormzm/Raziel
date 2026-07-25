@@ -599,13 +599,23 @@ def _finalize(
     cache_hit: bool,
 ) -> VerificationRun:
     pts = _pts_by_id(request.frames)
+    # After a context recovery, `request` is the RESAMPLED bundle while
+    # non-targeted constraints still cite frame ids validated against the
+    # original one. VerificationRequest caps the bundle at 24 frames, so adding
+    # context necessarily drops others, and a stale citation used to raise
+    # KeyError here -- crashing the whole verification instead of returning the
+    # result. A citation we can no longer resolve is dropped from the evidence
+    # PTS rather than fabricated; the constraint's own state is untouched.
     evidence_pts = {
-        item.constraint_id: tuple(pts[frame_id] for frame_id in item.evidence_frame_ids)
+        item.constraint_id: tuple(
+            pts[frame_id] for frame_id in item.evidence_frame_ids if frame_id in pts
+        )
         for item in [*result.atoms, *result.relations, *result.logic_groups]
     }
     intervals = tuple(
         (pts[item.start_frame_id], pts[item.end_frame_id])
         for item in result.matching_subintervals
+        if item.start_frame_id in pts and item.end_frame_id in pts
     )
     return VerificationRun(
         result=result,
