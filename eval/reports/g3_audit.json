@@ -1,0 +1,505 @@
+{
+  "audit_schema_version": "1.0.0",
+  "audit_set_version": "1.0.0",
+  "plan_section": "13.4",
+  "total_queries": 30,
+  "minimum_queries": 25,
+  "fully_correct": 24,
+  "score": 0.8,
+  "pass_threshold": 0.8,
+  "meets_query_minimum": true,
+  "missing_required_categories": [],
+  "unsafe_failures": 5,
+  "safe_abstain_failures": 1,
+  "max_unsafe_failures": 0,
+  "gate_passed": false,
+  "by_category": {
+    "object": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "attribute": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "action": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "binding": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "temporal": {
+      "total": 3,
+      "correct": 1,
+      "score": 0.3333333333333333
+    },
+    "multi_occurrence": {
+      "total": 2,
+      "correct": 1,
+      "score": 0.5
+    },
+    "absent": {
+      "total": 2,
+      "correct": 1,
+      "score": 0.5
+    },
+    "ambiguous": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "bounded_or": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "visible_absence": {
+      "total": 1,
+      "correct": 1,
+      "score": 1.0
+    },
+    "small_count": {
+      "total": 2,
+      "correct": 1,
+      "score": 0.5
+    },
+    "unbounded_count_rejected": {
+      "total": 1,
+      "correct": 1,
+      "score": 1.0
+    },
+    "unsupported_negation": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "unsupported_universal": {
+      "total": 2,
+      "correct": 2,
+      "score": 1.0
+    },
+    "unsupported_comparative": {
+      "total": 2,
+      "correct": 1,
+      "score": 0.5
+    },
+    "long_gap_identity": {
+      "total": 1,
+      "correct": 1,
+      "score": 1.0
+    }
+  },
+  "results": [
+    {
+      "id": "g3_01",
+      "category": "object",
+      "text": "a person carrying a backpack",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_02",
+      "category": "object",
+      "text": "a bicycle near the entrance",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_03",
+      "category": "attribute",
+      "text": "a black backpack near the gate",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_04",
+      "category": "attribute",
+      "text": "a person in a red jacket",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_05",
+      "category": "action",
+      "text": "someone places a box on the floor",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_06",
+      "category": "action",
+      "text": "a person picks up a bag",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_07",
+      "category": "binding",
+      "text": "a person carrying a black backpack near the gate",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_08",
+      "category": "binding",
+      "text": "a person wearing a hat carrying a bag",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_09",
+      "category": "temporal",
+      "text": "a person places a box before picking up a bag",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_10",
+      "category": "temporal",
+      "text": "someone picks up a bag after placing a box",
+      "fully_correct": false,
+      "failures": [
+        "missing temporal (places, before, picks up); got []"
+      ],
+      "severity": "unsafe",
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_11",
+      "category": "temporal",
+      "text": "a person entering then later leaving with a bag",
+      "fully_correct": false,
+      "failures": [
+        "missing temporal (enters, before, leaves); got []"
+      ],
+      "severity": "unsafe",
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": "Cross-window entrance/exit is a required staged scenario (plan 21.2) and golden case 5 (plan 29). If this fails, the golden suite cannot be satisfied from a real parse.",
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_12",
+      "category": "multi_occurrence",
+      "text": "every time someone carries a bag through the lobby",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_13",
+      "category": "multi_occurrence",
+      "text": "all occurrences of a person placing a box at the gate",
+      "fully_correct": false,
+      "failures": [
+        "no atom span matching 'places' (spans=['person', 'gate'])"
+      ],
+      "severity": "unsafe",
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_14",
+      "category": "absent",
+      "text": "no black bag visible in the lobby",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_15",
+      "category": "absent",
+      "text": "no one is carrying a bag",
+      "fully_correct": false,
+      "failures": [
+        "logic_groups missing operator 'visible_none' (got [])"
+      ],
+      "severity": "unsafe",
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": "Negated-subject phrasing. Must not become a positive 'carries' claim: an absence rendered as a presence is a truthfulness failure, not a parsing nicety.",
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_16",
+      "category": "ambiguous",
+      "text": "maybe a blue jacket near the door",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": "Plan 13.2: 'maybe' produces ambiguity, never automatic optionality.",
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_17",
+      "category": "ambiguous",
+      "text": "possibly someone with a dark bag",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_18",
+      "category": "bounded_or",
+      "text": "a red or blue jacket near the gate",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_19",
+      "category": "bounded_or",
+      "text": "someone wearing a hat or a cap",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_20",
+      "category": "visible_absence",
+      "text": "no bicycle visible at the entrance",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_21",
+      "category": "small_count",
+      "text": "exactly two people near the door",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_22",
+      "category": "small_count",
+      "text": "exactly three people in the lobby",
+      "fully_correct": false,
+      "failures": [
+        "interpretation_state: expected 'clear', got 'clarification_required'",
+        "logic_groups missing operator 'count' (got [])"
+      ],
+      "severity": "safe_abstain",
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_23",
+      "category": "unbounded_count_rejected",
+      "text": "three people standing together",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "safe_abstain",
+      "parser_abstained": true,
+      "notes": "A count with no declared continuous interval must ask for one (plan 14.3), never guess a scope.",
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_24",
+      "category": "unsupported_negation",
+      "text": "a person who is not carrying anything",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_25",
+      "category": "unsupported_negation",
+      "text": "someone without any luggage at all",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_26",
+      "category": "unsupported_universal",
+      "text": "everyone in the corridor is wearing a badge",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_27",
+      "category": "unsupported_universal",
+      "text": "all people at the gate carry bags",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_28",
+      "category": "unsupported_comparative",
+      "text": "a person taller than the doorway",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": null,
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_29",
+      "category": "unsupported_comparative",
+      "text": "the tallest person in the room",
+      "fully_correct": false,
+      "failures": [
+        "expected clarification_required, got interpretation_state='clear'",
+        "expected a clarification_question, got none",
+        "unsupported_constructs missing 'comparison' (got [])"
+      ],
+      "severity": "unsafe",
+      "declared_severity": "unsafe",
+      "parser_abstained": false,
+      "notes": "Superlative form of the same open-world comparison. 'Taller than' is rejected; the superlative must be too, or the rejection is trivially bypassable.",
+      "parser_error": null,
+      "interpretation_state": "clear"
+    },
+    {
+      "id": "g3_30",
+      "category": "long_gap_identity",
+      "text": "the same person returning two hours later",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": "Plan 33 item 10: long-gap actor identity is unsupported and must be rejected before retrieval with an order-only alternative.",
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    }
+  ]
+}

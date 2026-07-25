@@ -1,0 +1,426 @@
+{
+  "_help_1": "Gate G3 parser correctness audit set (plan 13.4). At least 25 scripted queries covering every listed category; target >= 80% fully correct parses with every failure visible and survivable.",
+  "_help_2": "Expectations are declarative ASSERTIONS on the resulting QueryPlan, not a full expected plan. A query counts as fully_correct only if EVERY assertion holds. This keeps the audit robust to incidental atom ordering while still pinning the semantics that matter.",
+  "_help_3": "Authored by Member 4 from plan 13.1/13.2/13.4. The parser (query/) is Member 2's lane; this set audits it and never modifies it. Failures are reported, not patched here.",
+  "_help_4": "Assertion keys: interpretation_state, clarification_required, unsupported_include, ambiguities_include, logic_operator, logic_min_count, logic_max_count, logic_atom_count, atom_spans_include, atom_types_include, relations_include, temporal_include, temporal_same_actor, forbid_atom_spans, min_atoms.",
+  "audit_set_version": "1.0.0",
+  "created_at": "2026-07-26",
+  "gate": {
+    "plan_section": "13.4",
+    "minimum_queries": 25,
+    "pass_threshold": 0.8,
+    "max_unsafe_failures": 0
+  },
+  "queries": [
+    {
+      "id": "g3_01",
+      "category": "object",
+      "text": "a person carrying a backpack",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "person",
+          "backpack"
+        ],
+        "relations_include": [
+          [
+            "person",
+            "carries",
+            "backpack"
+          ]
+        ]
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_02",
+      "category": "object",
+      "text": "a bicycle near the entrance",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "bicycle"
+        ],
+        "min_atoms": 2
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_03",
+      "category": "attribute",
+      "text": "a black backpack near the gate",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "black backpack",
+          "gate"
+        ],
+        "forbid_atom_spans": [
+          "blue",
+          "red"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_04",
+      "category": "attribute",
+      "text": "a person in a red jacket",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "red jacket"
+        ],
+        "forbid_atom_spans": [
+          "blue jacket",
+          "black jacket"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_05",
+      "category": "action",
+      "text": "someone places a box on the floor",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "places"
+        ],
+        "atom_types_include": [
+          "action"
+        ]
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_06",
+      "category": "action",
+      "text": "a person picks up a bag",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "picks up"
+        ],
+        "atom_types_include": [
+          "action"
+        ]
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_07",
+      "category": "binding",
+      "text": "a person carrying a black backpack near the gate",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "black backpack",
+          "person",
+          "gate"
+        ],
+        "relations_include": [
+          [
+            "person",
+            "carries",
+            "backpack"
+          ],
+          [
+            "person",
+            "near",
+            "gate"
+          ]
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_08",
+      "category": "binding",
+      "text": "a person wearing a hat carrying a bag",
+      "expect": {
+        "interpretation_state": "clear",
+        "relations_include": [
+          [
+            "person",
+            "carries",
+            "bag"
+          ]
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_09",
+      "category": "temporal",
+      "text": "a person places a box before picking up a bag",
+      "expect": {
+        "interpretation_state": "clear",
+        "temporal_include": [
+          [
+            "places",
+            "before",
+            "picks up"
+          ]
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_10",
+      "category": "temporal",
+      "text": "someone picks up a bag after placing a box",
+      "expect": {
+        "interpretation_state": "clear",
+        "temporal_include": [
+          [
+            "places",
+            "before",
+            "picks up"
+          ]
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_11",
+      "category": "temporal",
+      "text": "a person entering then later leaving with a bag",
+      "expect": {
+        "interpretation_state": "clear",
+        "temporal_include": [
+          [
+            "enters",
+            "before",
+            "leaves"
+          ]
+        ]
+      },
+      "notes": "Cross-window entrance/exit is a required staged scenario (plan 21.2) and golden case 5 (plan 29). If this fails, the golden suite cannot be satisfied from a real parse.",
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_12",
+      "category": "multi_occurrence",
+      "text": "every time someone carries a bag through the lobby",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "carries"
+        ]
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_13",
+      "category": "multi_occurrence",
+      "text": "all occurrences of a person placing a box at the gate",
+      "expect": {
+        "interpretation_state": "clear",
+        "atom_spans_include": [
+          "places"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_14",
+      "category": "absent",
+      "text": "no black bag visible in the lobby",
+      "expect": {
+        "interpretation_state": "clear",
+        "logic_operator": "visible_none"
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_15",
+      "category": "absent",
+      "text": "no one is carrying a bag",
+      "expect": {
+        "logic_operator": "visible_none"
+      },
+      "notes": "Negated-subject phrasing. Must not become a positive 'carries' claim: an absence rendered as a presence is a truthfulness failure, not a parsing nicety.",
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_16",
+      "category": "ambiguous",
+      "text": "maybe a blue jacket near the door",
+      "expect": {
+        "ambiguities_include": [
+          "maybe_language_requires_confirmation"
+        ]
+      },
+      "notes": "Plan 13.2: 'maybe' produces ambiguity, never automatic optionality.",
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_17",
+      "category": "ambiguous",
+      "text": "possibly someone with a dark bag",
+      "expect": {
+        "ambiguities_include": [
+          "maybe_language_requires_confirmation"
+        ]
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_18",
+      "category": "bounded_or",
+      "text": "a red or blue jacket near the gate",
+      "expect": {
+        "interpretation_state": "clear",
+        "logic_operator": "any",
+        "logic_atom_count": 2
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_19",
+      "category": "bounded_or",
+      "text": "someone wearing a hat or a cap",
+      "expect": {
+        "interpretation_state": "clear",
+        "logic_operator": "any",
+        "logic_atom_count": 2
+      },
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_20",
+      "category": "visible_absence",
+      "text": "no bicycle visible at the entrance",
+      "expect": {
+        "interpretation_state": "clear",
+        "logic_operator": "visible_none"
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_21",
+      "category": "small_count",
+      "text": "exactly two people near the door",
+      "expect": {
+        "interpretation_state": "clear",
+        "logic_operator": "count",
+        "logic_min_count": 2,
+        "logic_max_count": 2
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_22",
+      "category": "small_count",
+      "text": "exactly three people in the lobby",
+      "expect": {
+        "interpretation_state": "clear",
+        "logic_operator": "count",
+        "logic_min_count": 3,
+        "logic_max_count": 3
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_23",
+      "category": "unbounded_count_rejected",
+      "text": "three people standing together",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "unbounded_count_scope"
+        ]
+      },
+      "notes": "A count with no declared continuous interval must ask for one (plan 14.3), never guess a scope.",
+      "failure_severity": "safe_abstain"
+    },
+    {
+      "id": "g3_24",
+      "category": "unsupported_negation",
+      "text": "a person who is not carrying anything",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "open_world_negation"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_25",
+      "category": "unsupported_negation",
+      "text": "someone without any luggage at all",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "open_world_negation"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_26",
+      "category": "unsupported_universal",
+      "text": "everyone in the corridor is wearing a badge",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "universal_quantification"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_27",
+      "category": "unsupported_universal",
+      "text": "all people at the gate carry bags",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "universal_quantification"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_28",
+      "category": "unsupported_comparative",
+      "text": "a person taller than the doorway",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "comparison"
+        ]
+      },
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_29",
+      "category": "unsupported_comparative",
+      "text": "the tallest person in the room",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "comparison"
+        ]
+      },
+      "notes": "Superlative form of the same open-world comparison. 'Taller than' is rejected; the superlative must be too, or the rejection is trivially bypassable.",
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_30",
+      "category": "long_gap_identity",
+      "text": "the same person returning two hours later",
+      "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "long_gap_identity"
+        ]
+      },
+      "notes": "Plan 33 item 10: long-gap actor identity is unsupported and must be rejected before retrieval with an order-only alternative.",
+      "failure_severity": "unsafe"
+    }
+  ],
+  "_help_5": "failure_severity classifies the CONSEQUENCE of a wrong parse. 'unsafe' means the system could confidently answer a different question than the one asked, or invert a truth claim, with no clarification. 'safe_abstain' means it may under-extract or over-ask but never asserts something false. Plan 13.4 requires failures be visible AND survivable, so the gate does not pass while any unsafe failure stands, whatever the score."
+}
