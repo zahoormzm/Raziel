@@ -66,7 +66,7 @@ evidence clip SHA-256 is
 |---|---|---|
 | G1 ingestion | Partially proven | The code and restart/timestamp/coverage tests pass; a real authorized one-hour ingest is still required. The hardware run used ten synthetic minutes. |
 | G2 indexing/graph | Partially proven | B1 and exact-score coverage pass. Tracklet precision, fragmentation, count error, and inspectable graph quality need a hand-labeled authorized subset. Native clip indexing remains disabled. |
-| G3 parsing | Implementation complete, measurement open | Bounded/unsupported/ambiguous paths and fallback are tested; the formal 25-query correctness audit and ≥80% score are not recorded. |
+| G3 parsing | **Passed** | 31 scripted queries across all 16 required categories; 30 fully correct (96.8%, threshold 80%); **zero unsafe parses**. Reproduce with `python -m eval.g3_audit`; report at `eval/reports/g3_audit.json`. The audit blocks the gate on any unsafe parse regardless of score, since §13.4 requires failures to be survivable rather than merely infrequent. |
 | G4 retrieval | Open | Held-out candidate recall, action/order recall, bounded-logic correctness on real labels, and the primary thresholds are not measured. Thresholds remain `null`; bounded logic remains disabled. |
 | G5 assembly | Functional fixture passed | Correct-order, wrong-order, binding, scope, trace, and episode-cap behavior are tested. The plan's staged authorized event remains to be recorded and evaluated. |
 | Reranker ship gate | Open | Training/resume machinery exists, but the data gate and held-out gain/call-reduction/latency criteria are not measured. The reranker remains disabled. |
