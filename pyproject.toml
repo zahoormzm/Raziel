@@ -11,7 +11,29 @@ dependencies = ["pydantic>=2.13,<3"]
 
 [project.optional-dependencies]
 api = ["fastapi>=0.116,<1", "uvicorn>=0.35,<1"]
-test = ["pytest>=8.4,<9"]
+# `.[test]` must be sufficient to run `python -m pytest` on its own — that is the
+# workflow documented in README.md and the one CI uses. The suite imports fastapi
+# and starlette's TestClient (which requires httpx) in tests/integration/ and
+# tests/unit/test_verifier_worker.py, and Pillow for evidence-frame validation.
+test = [
+  "pytest>=8.4,<9",
+  "fastapi>=0.116,<1",
+  "uvicorn>=0.35,<1",
+  "httpx>=0.28,<1",
+  "pillow>=12,<13",
+]
+
+# The repository is a flat layout with many non-package top-level directories
+# (config/, data/, docker/, ui/, requirements/, and the gitignored artifacts/ and
+# models/). Setuptools refuses to guess in that situation, so the importable
+# packages are declared explicitly. `namespaces = true` is required because
+# grounding/, ml/, and query/ are PEP 420 namespace packages with no __init__.py.
+[tool.setuptools.packages.find]
+include = [
+  "api*", "eval*", "evidence*", "grounding*", "index*", "ingest*",
+  "ml*", "output*", "packages*", "query*", "scripts*", "tests*",
+]
+namespaces = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "eval/tests"]

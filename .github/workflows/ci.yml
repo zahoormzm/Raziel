@@ -13,5 +13,10 @@ jobs:
         with:
           python-version: "3.11"
       - run: python -m pip install -e ".[test]"
-      - run: python -m compileall -q .
+      # Compile the project's own sources explicitly. Compiling "." would also walk
+      # a developer's local .venv/ (third-party code targeting a newer Python fails
+      # to compile and would mask a real error here).
+      - run: >
+          python -m compileall -q
+          api data eval evidence grounding index ingest ml output packages query scripts tests
       - run: python -m pytest

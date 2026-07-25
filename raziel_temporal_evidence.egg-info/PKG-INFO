@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: raziel-temporal-evidence
+Version: 0.1.0
+Summary: Local-first temporal evidence intelligence for recorded surveillance footage
+Requires-Python: <3.13,>=3.11
+Requires-Dist: pydantic<3,>=2.13
+Provides-Extra: api
+Requires-Dist: fastapi<1,>=0.116; extra == "api"
+Requires-Dist: uvicorn<1,>=0.35; extra == "api"
+Provides-Extra: test
+Requires-Dist: pytest<9,>=8.4; extra == "test"
+Requires-Dist: fastapi<1,>=0.116; extra == "test"
+Requires-Dist: uvicorn<1,>=0.35; extra == "test"
+Requires-Dist: httpx<1,>=0.28; extra == "test"
+Requires-Dist: pillow<13,>=12; extra == "test"
