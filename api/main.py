@@ -23,7 +23,12 @@ def _default_benchmark_panel() -> dict[str, Any]:
         import json
 
         payload = json.loads(path.read_text(encoding="utf-8"))
-        payload["status"] = "not_yet_measured"
+        # Do not overwrite a status the evaluation lane recorded. Blanket-forcing
+        # "not_yet_measured" made a genuinely measured release panel
+        # indistinguishable from an unmeasured one at the API surface. The
+        # no-placeholder-scores policy is served by defaulting when the field is
+        # absent, not by discarding a real result.
+        payload.setdefault("status", "not_yet_measured")
         return payload
     return {
         "status": "not_yet_measured",

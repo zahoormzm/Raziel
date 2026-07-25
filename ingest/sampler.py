@@ -110,6 +110,14 @@ CREATE TABLE IF NOT EXISTS windows (
     t0 REAL NOT NULL,
     t1 REAL NOT NULL
 );
+-- Without this, `INSERT OR IGNORE INTO windows` has no conflict target to
+-- ignore, so re-ingesting a source appended a full duplicate set of windows
+-- (19 -> 38 -> 57 rows across three runs). Re-running ingest is the documented
+-- resume path, and the duplicates propagated: GraphBuilder emits one window
+-- evidence node per row, inflating expected/observed tick counts in the
+-- observation-safety check and producing duplicate candidates for one interval.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_windows_identity
+    ON windows(video_id, scale_s, t0, t1);
 CREATE TABLE IF NOT EXISTS ingest_generations (
     cache_key TEXT PRIMARY KEY,
     inputs_json TEXT NOT NULL

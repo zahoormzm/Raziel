@@ -170,11 +170,19 @@ class LocalExportService:
             capture_output=True,
             text=True,
         )
-        values = [
-            float(line.strip().rstrip(","))
-            for line in completed.stdout.splitlines()
-            if line.strip().rstrip(",")
-        ]
+        # ffprobe prints the literal "N/A" for frames with no usable timestamp
+        # (common with MPEG-TS and remuxed sources). The old guard only rejected
+        # blank lines, so "N/A" reached float() and raised ValueError after the
+        # clip had already been written and the export directory created.
+        values: list[float] = []
+        for line in completed.stdout.splitlines():
+            token = line.strip().rstrip(",")
+            if not token or token.upper() == "N/A":
+                continue
+            try:
+                values.append(float(token))
+            except ValueError:
+                continue
         prior = [value for value in values if value <= target + 1e-6]
         return max(prior) if prior else 0.0
 

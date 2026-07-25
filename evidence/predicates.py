@@ -7,6 +7,7 @@ with respect to coverage, assessability, and track fragmentation.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Callable, Iterable, Mapping
 
@@ -90,9 +91,14 @@ def payload_contains_label(payload: Mapping[str, object], expected: str) -> bool
         elif isinstance(value, (list, tuple)):
             values.extend(str(item) for item in value)
     searchable = " ".join(_norm(item) for item in values)
-    return expected_norm in searchable or all(
-        token in searchable for token in expected_norm.split("_")
-    )
+    # Match whole tokens, never bare substrings. Substring matching made "van"
+    # match "advantage" and "car" match "carries", and because this function
+    # decides node matching in query/graph_execute.py, a query for a red car
+    # bound to a node captioned "carries red bag" and was surfaced as graph
+    # evidence with a channel score of 1.0.
+    haystack = {token for token in re.split(r"[^a-z0-9]+", searchable) if token}
+    needles = [token for token in re.split(r"[^a-z0-9]+", expected_norm) if token]
+    return bool(needles) and all(token in haystack for token in needles)
 
 
 # Storage-level edges are exactly those declared in the master plan's graph
