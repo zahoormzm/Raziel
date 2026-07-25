@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "raziel:data/schemas/query_family.schema.json@1.0.0",
   "title": "Query family",
-  "description": "One evaluation query family. A family has a canonical query plus exactly two INDEPENDENTLY written paraphrases (variants are not independent families, §21.3). It carries the declared scope, zero/one/many ground-truth intervals, atom/relation/logic labels, typed challengers, assessability and boundary labels, and track/logic ground truth. Test ground truth is human-derived and never from retriever proposals. Empty-set (cardinality=zero) families require full human review of the declared scope. Composes the other data/schemas/*.schema.json via $ref. See RAZIEL_Master_Execution_Plan_v1.3.md §21.3, §21.5.",
+  "description": "One evaluation query family. A family has a canonical query plus exactly two INDEPENDENTLY written paraphrases (variants are not independent families, \u00a721.3). It carries the declared scope, zero/one/many ground-truth intervals, atom/relation/logic labels, typed challengers, assessability and boundary labels, and track/logic ground truth. Test ground truth is human-derived and never from retriever proposals. Empty-set (cardinality=zero) families require full human review of the declared scope. Composes the other data/schemas/*.schema.json via $ref. See RAZIEL_Master_Execution_Plan_v1.3.md \u00a721.3, \u00a721.5.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -21,27 +21,66 @@
     "synthetic"
   ],
   "properties": {
-    "family_schema_version": { "const": "1.0.0" },
-    "family_id": { "type": "string", "minLength": 1 },
-    "pool": { "enum": ["staged", "organizer"] },
+    "family_schema_version": {
+      "const": "1.1.0"
+    },
+    "family_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pool": {
+      "enum": [
+        "staged",
+        "organizer",
+        "external"
+      ],
+      "description": "Provenance pool. staged, organizer, and external pools are kept strictly separate (plan 21.5). 'external' is third-party footage used ONLY as a generalization probe: its video is external, its labels are always our own human ledger. Third-party annotations are never imported as ground truth."
+    },
     "split": {
-      "enum": ["train", "dev", "test"],
+      "enum": [
+        "train",
+        "dev",
+        "test"
+      ],
       "description": "Assigned by scenario/session. All families of one scenario_id share one split; a session never straddles splits (enforced by eval/schema.py)."
     },
-    "scenario_id": { "type": "string", "minLength": 1 },
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
     "session_ids": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Sessions this family draws ground truth from. Used for leakage checks."
     },
     "capability_tags": {
       "type": "array",
       "description": "Which supported capabilities this family exercises (for coverage reporting).",
       "items": {
-        "enum": ["object", "attribute", "action", "binding", "location", "temporal_order", "multi_occurrence", "empty_set", "ambiguous", "bounded_or", "visible_absence", "bounded_count", "unobservable", "long_gap_identity_rejection"]
+        "enum": [
+          "object",
+          "attribute",
+          "action",
+          "binding",
+          "location",
+          "temporal_order",
+          "multi_occurrence",
+          "empty_set",
+          "ambiguous",
+          "bounded_or",
+          "visible_absence",
+          "bounded_count",
+          "unobservable",
+          "long_gap_identity_rejection"
+        ]
       }
     },
-    "canonical_query": { "type": "string", "minLength": 1 },
+    "canonical_query": {
+      "type": "string",
+      "minLength": 1
+    },
     "paraphrases": {
       "type": "array",
       "minItems": 2,
@@ -50,67 +89,141 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["text", "author_id", "written_independently"],
+        "required": [
+          "text",
+          "author_id",
+          "written_independently"
+        ],
         "properties": {
-          "text": { "type": "string", "minLength": 1 },
-          "author_id": { "type": "string", "minLength": 1 },
-          "written_independently": { "const": true }
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "author_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "written_independently": {
+            "const": true
+          }
         }
       }
     },
     "scope": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["video_ids", "camera_ids", "sampling_policy_version"],
+      "required": [
+        "video_ids",
+        "camera_ids",
+        "sampling_policy_version"
+      ],
       "description": "Declared search scope. All claims are conditional on this scope and sampling policy.",
       "properties": {
-        "video_ids": { "type": "array", "items": { "type": "string" } },
-        "camera_ids": { "type": "array", "items": { "type": "string" } },
-        "start_time": { "type": ["number", "null"], "minimum": 0 },
-        "end_time": { "type": ["number", "null"], "minimum": 0 },
-        "sampling_policy_version": { "type": "string", "minLength": 1 }
+        "video_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "camera_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start_time": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "end_time": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "sampling_policy_version": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "ground_truth": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["intervals", "atoms_relations"],
+      "required": [
+        "intervals",
+        "atoms_relations"
+      ],
       "properties": {
-        "intervals": { "$ref": "interval.schema.json" },
-        "atoms_relations": { "$ref": "atom_relation_state.schema.json" },
-        "track_logic": { "$ref": "track_logic_ground_truth.schema.json" }
+        "intervals": {
+          "$ref": "interval.schema.json"
+        },
+        "atoms_relations": {
+          "$ref": "atom_relation_state.schema.json"
+        },
+        "track_logic": {
+          "$ref": "track_logic_ground_truth.schema.json"
+        }
       }
     },
     "labels": {
       "type": "object",
       "additionalProperties": false,
       "description": "boundary is present for families with a target event to bound; it is omitted for empty-set (cardinality=zero) families.",
-      "required": ["assessability"],
+      "required": [
+        "assessability"
+      ],
       "properties": {
-        "assessability": { "$ref": "assessability_boundary.schema.json#/$defs/Assessability" },
-        "boundary": { "$ref": "assessability_boundary.schema.json#/$defs/BoundaryLabel" }
+        "assessability": {
+          "$ref": "assessability_boundary.schema.json#/$defs/Assessability"
+        },
+        "boundary": {
+          "$ref": "assessability_boundary.schema.json#/$defs/BoundaryLabel"
+        }
       }
     },
     "challengers": {
       "type": "array",
-      "items": { "$ref": "challenger.schema.json" }
+      "items": {
+        "$ref": "challenger.schema.json"
+      }
     },
     "ground_truth_source": {
       "const": "human_ledger",
-      "description": "Test truth is human-derived from the ledger. Retriever/auto proposals are prohibited as a source of test truth (§21.5)."
+      "description": "Test truth is human-derived from the ledger. Retriever/auto proposals are prohibited as a source of test truth (\u00a721.5)."
     },
     "empty_set_review": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["required", "review_complete"],
+      "required": [
+        "required",
+        "review_complete"
+      ],
       "description": "For cardinality=zero families, full human review of the declared scope is required and must be complete before the family is usable for test.",
       "properties": {
-        "required": { "type": "boolean" },
-        "reviewed_by": { "type": "array", "items": { "type": "string" } },
-        "review_complete": { "type": "boolean" }
+        "required": {
+          "type": "boolean"
+        },
+        "reviewed_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "review_complete": {
+          "type": "boolean"
+        }
       }
     },
-    "notes": { "type": "string" },
-    "synthetic": { "type": "boolean" }
+    "notes": {
+      "type": "string"
+    },
+    "synthetic": {
+      "type": "boolean"
+    }
   }
 }

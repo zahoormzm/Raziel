@@ -2,7 +2,7 @@
   "_help_1": "GUIDANCE TEMPLATE — strip _help_* and replace FILL_.... Do NOT hand-write content_hash.",
   "_help_2": "Seal with eval.schema.seal_manifest(...) to compute the immutable content_hash. Distinct from the ingestion VideoManifest contract (Member 1).",
   "_help_3": "CONTRACT DEPENDENCY: source_sha256 must equal ingestion's streamed SHA-256 for the same file.",
-  "manifest_schema_version": "1.0.0",
+  "manifest_schema_version": "1.1.0",
   "session_id": "FILL_session",
   "scenario_id": "FILL_scenario_split_unit",
   "pool": "FILL_staged_or_organizer",

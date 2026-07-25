@@ -16,9 +16,9 @@ by `const` in its schema.
 
 | Schema file | Version | Artifact | Notes |
 |---|---|---|---|
-| `footage_session_manifest.schema.json` | 1.0.0 | Immutable footage/session manifest | Content-hashed (`content_hash` = SHA-256 over canonical JSON minus that field). **Contract dependency:** `FootageFile.source_sha256` must equal the streamed SHA-256 that ingestion (`ingest/hash_source.py`, Member 1) computes for the same file. |
+| `footage_session_manifest.schema.json` | 1.1.0 | Immutable footage/session manifest | Content-hashed (`content_hash` = SHA-256 over canonical JSON minus that field). **Contract dependency:** `FootageFile.source_sha256` must equal the streamed SHA-256 that ingestion (`ingest/hash_source.py`, Member 1) computes for the same file. |
 | `ledger_entry.schema.json` | 1.0.0 | Event ledger entry | `provenance.source` is fixed to `human_watch`. Actors are anonymous per-camera ids. |
-| `query_family.schema.json` | 1.0.0 | Query family | Composes interval / atom-relation / challenger / assessability-boundary / track-logic schemas via `$ref`. Exactly two independent paraphrases. **Contract dependency:** family `atoms`/`relations`/`logic_groups` mirror the parser atom schema in §13.1 so labels align with `QueryPlan` (Member 2). |
+| `query_family.schema.json` | 1.1.0 | Query family | Composes interval / atom-relation / challenger / assessability-boundary / track-logic schemas via `$ref`. Exactly two independent paraphrases. **Contract dependency:** family `atoms`/`relations`/`logic_groups` mirror the parser atom schema in §13.1 so labels align with `QueryPlan` (Member 2). |
 | `interval.schema.json` | 1.0.0 | Zero/one/many intervals | Cardinality cross-checked against interval count. |
 | `atom_relation_state.schema.json` | 1.0.0 | Atom/relation/logic ground-truth states | Ground-truth labels use `supported/contradicted/unobservable` only; `undetermined` is a system output, never a label. |
 | `assessability_boundary.schema.json` | 1.0.0 | Assessability + boundary labels | `$defs.Assessability`, `$defs.BoundaryLabel` reused across schemas. |
@@ -32,7 +32,10 @@ These are enforced by `eval/schema.py` domain checks and covered by tests:
 
 1. **Manifest immutability** — recomputed `content_hash` must match the stored value.
 2. **Split discipline** — one `scenario_id` maps to exactly one split; a `session_id`
-   never appears under two splits; staged and organizer pools stay separate.
+   never appears under two splits; staged, organizer, and external pools stay separate.
+10. **External-pool truth** — an `external` family's `ground_truth_source` is still
+    `human_ledger`. Third-party datasets supply *video only*; their annotations are
+    never imported as ground truth.
 3. **Interval cardinality** — `zero`→0 intervals, `one`→1, `many`→≥2; every `t1 >= t0`.
 4. **Paraphrase independence** — exactly two paraphrases with distinct `author_id`.
 5. **Retriever-truth prohibition** — `ground_truth_source` must be `human_ledger`;
@@ -52,3 +55,31 @@ These are enforced by `eval/schema.py` domain checks and covered by tests:
 A schema change is a versioned event: bump the `const` version, migrate every fixture,
 update this table and the affected cross-field checks, and re-run the owned test suite.
 No silent edits.
+
+## Change log
+
+### 1.1.0 — 2026-07-26 — `external` provenance pool
+
+`footage_session_manifest.schema.json` and `query_family.schema.json` bumped
+1.0.0 → 1.1.0. The `pool` enum gains a third value, `external`.
+
+**What it is.** A generalization probe. Staged footage is recorded by us, which
+means we stage the events, write the queries, *and* write the labels — three
+degrees of freedom held by one team. The `external` pool answers the obvious
+question that follows: does the system work on footage we did not design to be
+findable?
+
+**The rule that makes it safe.** External footage supplies **video only**. Labels
+always come from our own human ledger under our own protocol
+(`ground_truth_source = human_ledger`, unchanged). A third-party dataset's
+annotations are never imported as ground truth — their label model is not ours
+(no four-state evidence, no assessability, no bounded-count or visible-absence
+safety conditions) and their protocol is unknown to us. Enforced by
+`eval/tests/test_dataset.py::test_external_pool_never_carries_third_party_truth`.
+
+**Additive and backward compatible.** Every 1.0.0 artifact remains valid; the
+version bump follows the change policy above rather than any incompatibility.
+The seed dataset was regenerated via `data/tools/build_seed_dataset.py`.
+
+**Migration:** none required for existing data. Pool-separation and split
+discipline are string-generic and needed no logic change.

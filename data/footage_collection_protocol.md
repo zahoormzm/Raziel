@@ -125,9 +125,31 @@ ffprobe -v error -show_entries format=duration,format_name -show_entries stream=
 
 ---
 
+## 3a. The `external` pool (generalization probe)
+
+Schema 1.1.0 adds a third pool, `external`: third-party footage used to test whether the
+system works on video we did not stage. Rationale and the full instruction set are in
+[`../START_HERE.md`](../START_HERE.md) §4a. The operational rules:
+
+| Rule | Detail |
+|---|---|
+| **Video only** | The source supplies footage. `ground_truth_source` stays `human_ledger`. Third-party annotations are never imported — if the download shipped label files, do not open them. |
+| **Consent provenance first** | Prefer datasets recorded with consenting paid actors. Accept clearly licensed footage with documented provenance. Reject anything scraped or of unclear consent status. |
+| **Verify the licence yourself** | Person 5 reads the actual licence and consent documentation before downloading, and records name, URL, licence, consent basis, and check date in the manifest notes. Do not rely on any summary, including one written inside this repository. |
+| **Size** | 20–30 minutes total. This is a probe, not a second dataset; every extra minute is Person 1's ledger time. |
+| **Authorization field** | `authorization.status` reflects the **licence**, and `consent_recorded` means *the source documented its consent basis* — not that we obtained consent ourselves. Say which, in `authorization.notes`. |
+| **Reporting** | External results are reported **separately** from staged. Never averaged in — a combined number hides the exact difference the pool exists to measure. |
+
+Enforced by `eval/tests/test_dataset.py::test_external_pool_never_carries_third_party_truth`.
+
+If consent provenance cannot be established in ~30 minutes of looking, pick a different
+source. Ambiguity here is a reason to stop, not to proceed carefully.
+
+---
+
 ## 4. Pool discipline
 
-- **Staged and organizer pools never mix within a scenario** (§21.5). Enforced by
+- **Staged, organizer, and external pools never mix within a scenario** (§21.5). Enforced by
   `eval.schema.check_split_discipline`.
 - Splits are assigned by scenario **before** anyone sees system results, never after.
 - Test ground truth never comes from retriever proposals. Auto-proposals may accelerate

@@ -412,7 +412,7 @@ def validate_golden_case(case: dict) -> ValidationResult:
 # --------------------------------------------------------------------------- #
 
 def check_split_discipline(families: list[dict]) -> ValidationResult:
-    """Split by scenario/session; keep staged and organizer pools separate."""
+    """Split by scenario/session; keep staged, organizer, and external pools separate."""
     errors: list[str] = []
     scenario_split: dict[str, str] = {}
     scenario_pool: dict[str, str] = {}

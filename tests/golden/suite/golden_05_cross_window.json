@@ -5,7 +5,7 @@
   "title": "Cross-window order",
   "synthetic": true,
   "family": {
-    "family_schema_version": "1.0.0",
+    "family_schema_version": "1.1.0",
     "family_id": "gold_fam_05",
     "pool": "staged",
     "split": "test",

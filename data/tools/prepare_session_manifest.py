@@ -156,11 +156,18 @@ def load_plan() -> dict:
     return json.loads(PLAN_PATH.read_text(encoding="utf-8"))
 
 
+def all_planned(plan: dict) -> list[dict]:
+    """Staged sessions plus any external generalization-probe sessions."""
+    return list(plan["sessions"]) + list(
+        plan.get("external_pool", {}).get("sessions", [])
+    )
+
+
 def plan_session(plan: dict, session_id: str) -> dict:
-    for entry in plan["sessions"]:
+    for entry in all_planned(plan):
         if entry["session_id"] == session_id:
             return entry
-    known = ", ".join(e["session_id"] for e in plan["sessions"])
+    known = ", ".join(e["session_id"] for e in all_planned(plan))
     raise SystemExit(f"Unknown session '{session_id}'. Planned sessions: {known}")
 
 
@@ -251,7 +258,7 @@ def build_manifest(plan: dict, entry: dict, args: argparse.Namespace) -> tuple[d
             )
 
     manifest = {
-        "manifest_schema_version": "1.0.0",
+        "manifest_schema_version": "1.1.0",
         "session_id": entry["session_id"],
         "scenario_id": entry["scenario_id"],
         "pool": entry["pool"],
@@ -278,6 +285,24 @@ def build_manifest(plan: dict, entry: dict, args: argparse.Namespace) -> tuple[d
         warnings.append(
             "organizer pool without --organizer-delivery-ref; provenance is incomplete."
         )
+
+    if entry["pool"] == "external":
+        # External footage is a generalization probe: their video, our labels.
+        # The licence and consent basis are the provenance, so they must be written down.
+        notes = (args.authorization_notes or "").lower()
+        if not all(k in notes for k in ("licence", "source")) and not all(
+            k in notes for k in ("license", "source")
+        ):
+            warnings.append(
+                "external pool: --authorization-notes should record the source name, URL, "
+                "licence, consent basis, and the date you checked them. "
+                "Person 5 verifies the licence directly, not from any summary."
+            )
+        if "PLACEHOLDER" in entry.get("staged_scenario_description", ""):
+            warnings.append(
+                "external pool: session_plan.json still holds the PLACEHOLDER description. "
+                "Replace it with the real source, licence, and consent basis before sealing."
+            )
 
     return S.seal_manifest(manifest), warnings
 
@@ -373,8 +398,8 @@ def main(argv: list[str] | None = None) -> int:
     plan = load_plan()
 
     if args.list:
-        print(f"{'session':<10} {'scenario':<18} {'split':<6} {'cam':<8} {'planned':>8}  recorded")
-        for entry in plan["sessions"]:
+        print(f"{'session':<10} {'scenario':<18} {'split':<6} {'cam':<11} {'planned':>8}  recorded")
+        for entry in all_planned(plan):
             directory = _REPO / plan["footage_root"] / entry["session_dir"]
             files = []
             if directory.exists():
@@ -384,8 +409,9 @@ def main(argv: list[str] | None = None) -> int:
             sealed = (MANIFESTS_DIR / f"{entry['session_id']}.json").exists()
             print(
                 f"{entry['session_id']:<10} {entry['scenario_id']:<18} {entry['split']:<6} "
-                f"{entry['camera_ids'][0]:<8} {entry['planned_duration_s']:>7}s  "
+                f"{entry['camera_ids'][0]:<11} {entry['planned_duration_s']:>7}s  "
                 f"{state}{'  [sealed]' if sealed else ''}"
+                f"{'  [external probe]' if entry['pool'] == 'external' else ''}"
             )
         return 0
 

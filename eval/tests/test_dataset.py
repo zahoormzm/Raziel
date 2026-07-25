@@ -56,12 +56,25 @@ class TestSeedDatasetOnDisk(unittest.TestCase):
                 self.assertTrue(S.verify_manifest_hash(m))
                 self.assertTrue(S.validate_footage_manifest(m).ok)
 
-    def test_staged_and_organizer_pools_separate(self):
+    def test_pools_separate(self):
         pools = {f["scenario_id"]: f["pool"] for f in self.families}
         # each scenario has exactly one pool (guaranteed by split discipline too)
-        self.assertTrue(all(p in ("staged", "organizer") for p in pools.values()))
+        self.assertTrue(all(p in ("staged", "organizer", "external") for p in pools.values()))
         self.assertIn("organizer", pools.values())
         self.assertIn("staged", pools.values())
+
+    def test_external_pool_never_carries_third_party_truth(self):
+        """External footage is a generalization probe: their video, our labels.
+
+        Third-party annotations are never imported as ground truth (plan 21.5).
+        """
+        for fam in self.families:
+            if fam.get("pool") == "external":
+                self.assertEqual(
+                    fam.get("ground_truth_source"), "human_ledger",
+                    f"{fam['family_id']}: external-pool family must be labelled from our "
+                    "own human ledger, never from the source dataset's annotations",
+                )
 
     def test_annotations_validate_and_order(self):
         for a in self.annotations:

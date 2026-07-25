@@ -160,5 +160,32 @@
       "capabilities": ["empty_set"]
     }
   ],
-  "organizer_pool_note": "Organizer footage, if delivered, is recorded as sess_101+ under scenario ids scn_org_* in the organizer pool, split separately. It never shares a scenario_id with staged footage (SS21.5)."
+  "organizer_pool_note": "Organizer footage, if delivered, is recorded as sess_101+ under scenario ids scn_org_* in the organizer pool, split separately. It never shares a scenario_id with staged footage (SS21.5).",
+  "external_pool": {
+    "purpose": "Generalization probe. Third-party footage we did not stage, labelled with OUR protocol, to answer whether the system works on video not designed by us to be findable.",
+    "hard_rule": "Their video, our labels. ground_truth_source stays human_ledger. Third-party annotations are NEVER imported as ground truth.",
+    "selection_order": [
+      "Best: dataset recorded with consenting paid actors for research purposes.",
+      "Acceptable: clearly licensed footage with documented provenance.",
+      "Rejected: scraped footage, unclear consent status, or identifiable people who did not agree."
+    ],
+    "verification": "Person 5 reads the actual licence and consent documentation before downloading, and records source name, URL, licence, consent basis, and check date in authorization.notes. Do not rely on any summary, including one written inside this repository.",
+    "target_minutes": [20, 30],
+    "expected_families": [5, 10],
+    "reporting": "Reported separately from staged results. Never averaged in.",
+    "sessions": [
+      {
+        "session_id": "sess_201",
+        "session_dir": "external/session_201",
+        "scenario_id": "scn_ext_a",
+        "pool": "external",
+        "split": "test",
+        "camera_ids": ["cam_ext_01"],
+        "planned_duration_s": 1500,
+        "g1_anchor": false,
+        "expected_families": 8,
+        "staged_scenario_description": "PLACEHOLDER until a source is selected. Third-party fixed-camera footage used as a generalization probe. Replace this description with the actual source name, licence, and consent basis before sealing."
+      }
+    ]
+  }
 }

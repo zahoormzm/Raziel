@@ -126,6 +126,116 @@ Turn ledger entries into query families: write the questions, write two independ
 paraphrases each, and have two people independently label a subset so we can measure how much
 humans agree with each other.
 
+### Phase 4 — The generalization probe (about half a day, Persons 5 then 1)
+
+A small amount of **footage we did not record ourselves**, labelled with our own protocol.
+This is optional in the sense that the project survives without it, and important in the sense
+that it answers the sharpest question anyone will ask. See §4a.
+
+---
+
+## 4a. The generalization probe — footage we did not record
+
+### The problem it fixes
+
+Everything in Phases 1–3 has a weakness that is worth stating out loud, because someone else
+will state it for us otherwise:
+
+> **We stage the events, we write the questions, and we write the answers.**
+
+Three degrees of freedom, all held by the same five people. Even with everyone acting in good
+faith, we will unconsciously stage scenes the way we imagine the system sees the world, and
+write questions in the vocabulary we used when staging. A reviewer is entitled to ask: *"Does
+this work on footage you didn't design to be findable?"* — and right now we could not answer.
+
+So we take a **small amount of third-party footage**, label it with our own protocol, and
+report it separately. If the system does well, that is real evidence. If it does badly, that
+is a real finding and we publish it. Either outcome beats having no answer.
+
+### The one rule
+
+> **Their video. Our labels. Always.**
+
+Public datasets come with their own annotations. **We never use them.** Not as a shortcut, not
+as a starting point, not "just to check". Three reasons:
+
+1. **Their label model is not ours.** We record four evidence states, assessability, boundary
+   tolerance, bounded counts, and visible-absence safety conditions. No public dataset has
+   those fields. There is nothing to import.
+2. **We do not know their protocol.** Who labelled it, how carefully, under what definition of
+   "carrying"? Unknown provenance cannot be ground truth.
+3. **It is the one rule this whole lane exists to protect.** Our labels come from a human
+   watching video. That is the entire basis of every number we will publish.
+
+The software enforces this: an `external` family whose ground truth is not `human_ledger` is
+rejected by the test suite.
+
+### Choosing the footage — consent comes first
+
+**This is the part to get right, and the part where the obvious shortcut is the wrong one.**
+
+Surveillance datasets have a genuinely bad history. Several well-known ones were built from
+footage of people who never agreed to be recorded, labelled, or published, and were later
+withdrawn. For a project whose whole argument is *"we are the system that does not overclaim
+about people, does not assert identity, and admits what it cannot see"*, evaluating on
+non-consensual surveillance footage would undercut the thing we are selling. A sharp reviewer
+would notice.
+
+So the selection order is **consent provenance first, convenience second**:
+
+1. **Best:** a dataset recorded with **consenting paid actors** for research purposes. Some
+   surveillance-activity datasets were built exactly this way, specifically to avoid the
+   consent problem. This matches our own staged model and is easy to defend.
+2. **Acceptable:** clearly licensed footage (e.g. a permissive Creative Commons licence) where
+   the licence and its provenance are documented. Less surveillance-shaped, still useful.
+3. **Not acceptable:** anything scraped, anything with unclear provenance, anything whose
+   consent status you cannot establish, and anything a person could be identified from and did
+   not agree to.
+
+**Person 5 must read the actual licence and consent documentation before downloading
+anything.** Do not rely on "everyone uses it" or on a summary — including any summary given to
+you inside this project. Terms change and datasets get withdrawn. Write down what you found.
+
+If you cannot establish consent provenance in 30 minutes of looking, **pick a different
+source**. This is not the place to push through ambiguity.
+
+### What to actually do
+
+**Person 5:**
+
+1. Identify a candidate source. Record its name, URL, licence, consent basis, and the date you
+   checked, in the session notes.
+2. Take **20–30 minutes** of footage. Not more — this is a probe, not a second dataset, and
+   every extra minute is ledger time taken from Person 1.
+3. Prefer fixed-camera, surveillance-like footage. Handheld or heavily edited video tests
+   something we do not claim to do.
+4. Place it under `artifacts/authorized_footage/external/session_201/`.
+5. Seal the manifest with `--authorization-status` reflecting the **licence**, not staged
+   consent, and put the licence reference in the notes. Consent here means *the source
+   documented its consent basis*, not that we obtained it.
+
+**Person 1:**
+
+6. Ledger it **exactly like our own footage**. Same protocol, same anonymous `P1`/`P2` ids,
+   same assessability discipline. Do not look at any annotations that shipped with the
+   dataset — if the download included label files, do not open them.
+7. Build **5–10 families** from your ledger entries. Persons 2 and 3 write paraphrases as
+   normal.
+
+**Everyone:** these families go in their own pool and their own split. They are reported
+**separately** from the staged results — never averaged together. A combined number would hide
+exactly the difference we built this to measure.
+
+### What to expect
+
+Expect the system to do **worse** here than on staged footage. That is the normal and
+informative outcome, not a failure of the probe. Staged footage is clean, well-framed, and
+deliberately unambiguous; real footage is not. The size of the gap is the finding.
+
+Budget: about **2 hours** of Person 1's time on top of the main ledger. If Phase 2 has
+overrun, this is the first thing to cut — say so, and we report the staged results alone with
+the limitation stated plainly.
+
 ---
 
 ## 5. Who does what
@@ -263,6 +373,8 @@ You are finished with your part when all of these are true:
 - [ ] 14 of them have been independently labelled by two people who did not confer
 - [ ] Those disagreements have been settled by a third person, afterwards
 - [ ] Nothing anywhere is marked as synthetic
+- [ ] *(If done)* 20–30 min of external footage, its licence and consent basis written down,
+      5–10 families built from **our** ledger, kept in its own pool and reported separately
 
 Then the technical work resumes and we finally find out whether the thing we built works.
 

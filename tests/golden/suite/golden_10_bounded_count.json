@@ -5,7 +5,7 @@
   "title": "Bounded count with fragmentation decoy",
   "synthetic": true,
   "family": {
-    "family_schema_version": "1.0.0",
+    "family_schema_version": "1.1.0",
     "family_id": "gold_fam_10",
     "pool": "staged",
     "split": "test",

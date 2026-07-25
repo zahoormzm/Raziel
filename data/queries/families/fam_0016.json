@@ -1,5 +1,5 @@
 {
-  "family_schema_version": "1.0.0",
+  "family_schema_version": "1.1.0",
   "family_id": "fam_0016",
   "pool": "staged",
   "split": "test",

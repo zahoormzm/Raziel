@@ -196,7 +196,7 @@ def family(fid, session, canonical, para, ar, ivs, labels, tags,
     if track_logic:
         gt["track_logic"] = track_logic
     f = {
-        "family_schema_version": "1.0.0",
+        "family_schema_version": "1.1.0",
         "family_id": fid,
         "pool": pool,
         "split": split,
@@ -1146,7 +1146,7 @@ def build_manifests() -> list[dict]:
     for session, (pool, split, cam, dur, auth, consent) in SESSIONS.items():
         file_id = _video(session)
         m = {
-            "manifest_schema_version": "1.0.0",
+            "manifest_schema_version": "1.1.0",
             "session_id": session,
             "scenario_id": _scenario(session),
             "pool": pool,

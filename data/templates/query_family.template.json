@@ -1,7 +1,7 @@
 {
   "_help_1": "GUIDANCE TEMPLATE — strip every _help_* key and replace FILL_... before validating.",
   "_help_2": "Authoritative shape: data/schemas/query_family.schema.json. Protocol: data/ledger.md.",
-  "family_schema_version": "1.0.0",
+  "family_schema_version": "1.1.0",
   "family_id": "FILL_unique_id_e.g._fam_0101",
   "pool": "FILL_staged_or_organizer",
   "split": "FILL_train_dev_or_test  (assigned by scenario/session; a scenario is one split)",

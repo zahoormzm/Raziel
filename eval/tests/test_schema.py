@@ -14,7 +14,7 @@ from eval import schema as S
 
 def valid_manifest():
     m = {
-        "manifest_schema_version": "1.0.0",
+        "manifest_schema_version": "1.1.0",
         "session_id": "sess_x", "scenario_id": "scn_x", "pool": "staged",
         "camera_ids": ["cam_x"],
         "footage_files": [{
@@ -33,7 +33,7 @@ def valid_family(fid="fam_x", split="dev", cardinality="one"):
         "video_id": "sess_x_v1", "camera_id": "cam_x", "t0": 10.0, "t1": 20.0,
     }]
     fam = {
-        "family_schema_version": "1.0.0", "family_id": fid, "pool": "staged",
+        "family_schema_version": "1.1.0", "family_id": fid, "pool": "staged",
         "split": split, "scenario_id": "scn_x", "session_ids": ["sess_x"],
         "capability_tags": ["object"],
         "canonical_query": "a black bag near the gate",
