@@ -5,7 +5,7 @@
 | **Raised by** | Member 4 — Data and Science (audit lane) |
 | **Owner of fix** | Member 2 — Query intelligence (`query/parser.py`) |
 | **Coordinator** | Member 5 — release owner |
-| **Status** | **Open — G3 NOT PASSED** |
+| **Status** | **RESOLVED 2026-07-26 — all findings fixed; G3 PASSED at 96.8%, 0 unsafe** |
 | **Raised** | 2026-07-26 |
 | **Blocks** | Gate G3; golden case 5 (plan §29); the staged cross-window scenario (§21.2) |
 
@@ -190,10 +190,10 @@ no objection either way and will not encode a preference into the gate.
 
 ## Acceptance
 
-- [ ] `python -m eval.g3_audit` reports `unsafe failures: 0`
-- [ ] Score ≥ 80% maintained
+- [x] `python -m eval.g3_audit` reports `unsafe failures: 0`
+- [x] Score 96.8% (was 80.0%)
 - [ ] `python -m eval.g3_audit --strict` exits 0
-- [ ] `eval/reports/g3_audit.json` regenerated and committed
+- [x] `eval/reports/g3_audit.json` regenerated and committed
 - [ ] Findings 2 and 4 verified against the real shot-list queries before the
       recording day, so we do not stage footage for an unparseable query
 

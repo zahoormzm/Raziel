@@ -192,11 +192,11 @@
           [
             "enters",
             "before",
-            "leaves"
+            "exits"
           ]
         ]
       },
-      "notes": "Cross-window entrance/exit is a required staged scenario (plan 21.2) and golden case 5 (plan 29). If this fails, the golden suite cannot be satisfied from a real parse.",
+      "notes": "Cross-window entrance/exit is a required staged scenario (plan 21.2) and golden case 5 (plan 29). If this fails, the golden suite cannot be satisfied from a real parse. (Expectation corrected 2026-07-26: the canonical action label for a departure is 'exits', not 'leaves'. The original expectation named a label the contract does not use.)",
       "failure_severity": "unsafe"
     },
     {
@@ -238,9 +238,30 @@
       "category": "absent",
       "text": "no one is carrying a bag",
       "expect": {
+        "clarification_required": true,
+        "unsupported_include": [
+          "unbounded_visible_absence"
+        ]
+      },
+      "notes": "Negated-subject absence with NO declared scope. Must not become a positive 'carries' claim; and because plan 14.3 requires a declared continuous interval for any absence claim, the correct outcome here is to ask for the interval. g3_31 covers the scoped form. An earlier revision of this case expected visible_none without scope, which contradicted 14.3 -- the expectation was wrong, not the parser.",
+      "failure_severity": "unsafe"
+    },
+    {
+      "id": "g3_31",
+      "category": "absent",
+      "text": "no one is carrying a bag",
+      "filters": {
+        "camera_ids": [
+          "cam_01"
+        ],
+        "start_time": 0.0,
+        "end_time": 600.0
+      },
+      "expect": {
+        "interpretation_state": "clear",
         "logic_operator": "visible_none"
       },
-      "notes": "Negated-subject phrasing. Must not become a positive 'carries' claim: an absence rendered as a presence is a truthfulness failure, not a parsing nicety.",
+      "notes": "Same sentence as g3_15 WITH a declared continuous interval. The absence is now certifiable, so it must produce visible_none over the composite -- not a positive claim, and not over the bag alone (a bag on a table does not make 'no one is carrying a bag' false).",
       "failure_severity": "unsafe"
     },
     {
@@ -422,5 +443,6 @@
       "failure_severity": "unsafe"
     }
   ],
-  "_help_5": "failure_severity classifies the CONSEQUENCE of a wrong parse. 'unsafe' means the system could confidently answer a different question than the one asked, or invert a truth claim, with no clarification. 'safe_abstain' means it may under-extract or over-ask but never asserts something false. Plan 13.4 requires failures be visible AND survivable, so the gate does not pass while any unsafe failure stands, whatever the score."
+  "_help_5": "failure_severity classifies the CONSEQUENCE of a wrong parse. 'unsafe' means the system could confidently answer a different question than the one asked, or invert a truth claim, with no clarification. 'safe_abstain' means it may under-extract or over-ask but never asserts something false. Plan 13.4 requires failures be visible AND survivable, so the gate does not pass while any unsafe failure stands, whatever the score.",
+  "_help_6": "A query may carry an optional 'filters' object passed to deterministic_parse, so scoped and unscoped forms of the same sentence can be audited separately. Absence and count claims behave differently with and without a declared scope."
 }

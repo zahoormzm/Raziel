@@ -2,17 +2,17 @@
   "audit_schema_version": "1.0.0",
   "audit_set_version": "1.0.0",
   "plan_section": "13.4",
-  "total_queries": 30,
+  "total_queries": 31,
   "minimum_queries": 25,
-  "fully_correct": 24,
-  "score": 0.8,
+  "fully_correct": 30,
+  "score": 0.9677,
   "pass_threshold": 0.8,
   "meets_query_minimum": true,
   "missing_required_categories": [],
-  "unsafe_failures": 5,
+  "unsafe_failures": 0,
   "safe_abstain_failures": 1,
   "max_unsafe_failures": 0,
-  "gate_passed": false,
+  "gate_passed": true,
   "by_category": {
     "object": {
       "total": 2,
@@ -36,18 +36,18 @@
     },
     "temporal": {
       "total": 3,
-      "correct": 1,
-      "score": 0.3333333333333333
+      "correct": 3,
+      "score": 1.0
     },
     "multi_occurrence": {
       "total": 2,
-      "correct": 1,
-      "score": 0.5
+      "correct": 2,
+      "score": 1.0
     },
     "absent": {
-      "total": 2,
-      "correct": 1,
-      "score": 0.5
+      "total": 3,
+      "correct": 3,
+      "score": 1.0
     },
     "ambiguous": {
       "total": 2,
@@ -86,8 +86,8 @@
     },
     "unsupported_comparative": {
       "total": 2,
-      "correct": 1,
-      "score": 0.5
+      "correct": 2,
+      "score": 1.0
     },
     "long_gap_identity": {
       "total": 1,
@@ -217,11 +217,9 @@
       "id": "g3_10",
       "category": "temporal",
       "text": "someone picks up a bag after placing a box",
-      "fully_correct": false,
-      "failures": [
-        "missing temporal (places, before, picks up); got []"
-      ],
-      "severity": "unsafe",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
       "declared_severity": "unsafe",
       "parser_abstained": false,
       "notes": null,
@@ -232,14 +230,12 @@
       "id": "g3_11",
       "category": "temporal",
       "text": "a person entering then later leaving with a bag",
-      "fully_correct": false,
-      "failures": [
-        "missing temporal (enters, before, leaves); got []"
-      ],
-      "severity": "unsafe",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
       "declared_severity": "unsafe",
       "parser_abstained": false,
-      "notes": "Cross-window entrance/exit is a required staged scenario (plan 21.2) and golden case 5 (plan 29). If this fails, the golden suite cannot be satisfied from a real parse.",
+      "notes": "Cross-window entrance/exit is a required staged scenario (plan 21.2) and golden case 5 (plan 29). If this fails, the golden suite cannot be satisfied from a real parse. (Expectation corrected 2026-07-26: the canonical action label for a departure is 'exits', not 'leaves'. The original expectation named a label the contract does not use.)",
       "parser_error": null,
       "interpretation_state": "clear"
     },
@@ -260,11 +256,9 @@
       "id": "g3_13",
       "category": "multi_occurrence",
       "text": "all occurrences of a person placing a box at the gate",
-      "fully_correct": false,
-      "failures": [
-        "no atom span matching 'places' (spans=['person', 'gate'])"
-      ],
-      "severity": "unsafe",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
       "declared_severity": "unsafe",
       "parser_abstained": false,
       "notes": null,
@@ -288,14 +282,25 @@
       "id": "g3_15",
       "category": "absent",
       "text": "no one is carrying a bag",
-      "fully_correct": false,
-      "failures": [
-        "logic_groups missing operator 'visible_none' (got [])"
-      ],
-      "severity": "unsafe",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
+      "declared_severity": "unsafe",
+      "parser_abstained": true,
+      "notes": "Negated-subject absence with NO declared scope. Must not become a positive 'carries' claim; and because plan 14.3 requires a declared continuous interval for any absence claim, the correct outcome here is to ask for the interval. g3_31 covers the scoped form. An earlier revision of this case expected visible_none without scope, which contradicted 14.3 -- the expectation was wrong, not the parser.",
+      "parser_error": null,
+      "interpretation_state": "clarification_required"
+    },
+    {
+      "id": "g3_31",
+      "category": "absent",
+      "text": "no one is carrying a bag",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
       "declared_severity": "unsafe",
       "parser_abstained": false,
-      "notes": "Negated-subject phrasing. Must not become a positive 'carries' claim: an absence rendered as a presence is a truthfulness failure, not a parsing nicety.",
+      "notes": "Same sentence as g3_15 WITH a declared continuous interval. The absence is now certifiable, so it must produce visible_none over the composite -- not a positive claim, and not over the bag alone (a bag on a table does not make 'no one is carrying a bag' false).",
       "parser_error": null,
       "interpretation_state": "clear"
     },
@@ -475,18 +480,14 @@
       "id": "g3_29",
       "category": "unsupported_comparative",
       "text": "the tallest person in the room",
-      "fully_correct": false,
-      "failures": [
-        "expected clarification_required, got interpretation_state='clear'",
-        "expected a clarification_question, got none",
-        "unsupported_constructs missing 'comparison' (got [])"
-      ],
-      "severity": "unsafe",
+      "fully_correct": true,
+      "failures": [],
+      "severity": null,
       "declared_severity": "unsafe",
-      "parser_abstained": false,
+      "parser_abstained": true,
       "notes": "Superlative form of the same open-world comparison. 'Taller than' is rejected; the superlative must be too, or the rejection is trivially bypassable.",
       "parser_error": null,
-      "interpretation_state": "clear"
+      "interpretation_state": "clarification_required"
     },
     {
       "id": "g3_30",

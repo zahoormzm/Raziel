@@ -68,7 +68,7 @@ SUPPORTED_RELATION_PREDICATES = frozenset(
 )
 SUPPORTED_TEMPORAL_RELATIONS = frozenset({"before", "after"})
 SUPPORTED_OBSERVATION_SCOPES = frozenset(
-    {"candidate_episode", "camera_time_interval"}
+    {"candidate_episode", "continuous_camera_interval"}
 )
 
 
@@ -521,7 +521,7 @@ def validate_query_plan(plan: QueryPlanData) -> None:
         if group.observation_scope not in SUPPORTED_OBSERVATION_SCOPES:
             raise QueryValidationError(
                 f"logic group {group.group_id} requires an explicit bounded "
-                "candidate_episode or camera_time_interval scope"
+                "candidate_episode or continuous_camera_interval scope"
             )
         if group.operator is LogicOperator.ANY:
             if len(group.atom_ids) < 2 or len(group.atom_ids) > MAX_ANY_ALTERNATIVES:

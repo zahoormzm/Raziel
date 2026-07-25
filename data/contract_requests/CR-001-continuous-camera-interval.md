@@ -6,7 +6,7 @@
 | **Owner of change** | Member 2 — Query intelligence (`query/parser.py`, `query/schema.py`) |
 | **Coordinator** | Member 5 — release owner (§26.2.7 schema releases) |
 | **Affected consumers** | Member 4 (schemas, golden suite, validators), Member 3 (verification inputs) |
-| **Status** | **Open — approved in principle, not yet applied** |
+| **Status** | **RESOLVED 2026-07-26 — rename applied in `query/parser.py` and `query/schema.py`** |
 | **Raised** | 2026-07-26 |
 | **Blocks** | Freezing schema version 1.0 |
 
@@ -55,7 +55,7 @@ files plus any transitively affected fixtures.
 
 ## Acceptance
 
-- [ ] No occurrence of `camera_time_interval` remains outside this document and the historical
+- [x] No occurrence of `camera_time_interval` remains outside this document and the historical
       note in `RELEASE_STATUS.md`.
 - [ ] `python -m unittest discover -s eval/tests -t .` green.
 - [ ] `python tests/golden/test_golden_structure.py` green.

@@ -248,7 +248,15 @@ def run_audit(audit_set: dict | None = None) -> dict:
     results = []
     for case in audit_set["queries"]:
         try:
-            plan = plan_to_dict(deterministic_parse(case["text"]))
+            # A case may declare filters so the scoped and unscoped forms of the
+            # same sentence can be audited separately -- absence and count claims
+            # are legitimately different with and without a declared interval.
+            filters = case.get("filters")
+            plan = plan_to_dict(
+                deterministic_parse(case["text"], filters)
+                if filters
+                else deterministic_parse(case["text"])
+            )
             failures = check_query(case, plan)
             error = None
         except Exception as exc:  # a crash is a failure, never a skipped case

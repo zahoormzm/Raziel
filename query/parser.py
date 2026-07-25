@@ -37,7 +37,12 @@ from query.schema import (
 UNIVERSAL_RE = re.compile(r"\b(everyone|everybody|all\s+(?:people|persons|vehicles))\b", re.I)
 COMPARISON_RE = re.compile(
     r"\b(larger|smaller|taller|shorter|faster|slower|more\s+than|less\s+than|"
-    r"at\s+least\s+as|compared\s+to)\b",
+    r"at\s+least\s+as|compared\s+to|"
+    # Superlatives are the same open-world judgement in a different surface form.
+    # Rejecting "taller than" while accepting "the tallest" made the rejection
+    # bypassable by rephrasing (Gate G3 audit, CR-002 finding 5).
+    r"tallest|shortest|largest|smallest|biggest|longest|fastest|slowest|"
+    r"closest|nearest|furthest|farthest|most\s+\w+)\b",
     re.I,
 )
 EXCEPTION_RE = re.compile(r"\b(except|other\s+than|but\s+not)\b", re.I)
@@ -79,6 +84,15 @@ SIMPLE_VISIBLE_NONE_RE = re.compile(
     r"(?:backpacks?|bags?|bicycles?|bikes?|cars?|persons?|people|trucks?|vans?|vehicles?))\b",
     re.I,
 )
+# "no one is carrying a bag" / "nobody near the gate". A negated ACTOR, as
+# opposed to the negated-object form the two patterns above cover. Without this
+# the sentence parsed as an ordinary positive "carries" claim, inverting the
+# user's meaning -- an absence rendered as a presence (Gate G3 audit, CR-002
+# finding 1). It is a visible_none over the whole composite (person AND action
+# AND object), not over any single atom: a bag lying on a table does not make
+# "no one is carrying a bag" false.
+NEGATED_ACTOR_RE = re.compile(r"\b(?:no\s+one|no-one|nobody)\b", re.I)
+
 OR_RE = re.compile(r"\s+(?:or|either)\s+", re.I)
 OR_TARGET_RE = re.compile(
     r"\b((?:(?:black|blue|brown|gray|grey|green|orange|red|white|yellow)\s+)?"
@@ -115,15 +129,75 @@ OBJECT_WORDS = frozenset(
 LOCATION_WORDS = frozenset(
     {"entrance", "exit", "gate", "door", "zone", "counter", "road", "hallway"}
 )
+# Every action accepts its -ing form. Four of these previously did and three did
+# not, which silently dropped the action atom for "placing"/"entering"/"leaving"
+# and, because _extract_temporal needs two action atoms, silently dropped the
+# ordering constraint with it (Gate G3 audit, CR-002 finding 2).
+#
+# "left"/"leaves"/"leaving" are deliberately absent here: they are ambiguous
+# between placing an object down and departing, and listing them under two
+# patterns produced two action atoms from one word (CR-002 finding 6). They are
+# resolved by _left_verb_sense below and matched at a single span.
 ACTION_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("walks away", re.compile(r"\bwalk(?:s|ed|ing)?\s+away\b", re.I)),
     ("picks up", re.compile(r"\bpick(?:s|ed|ing)?\s+up\b", re.I)),
-    ("places", re.compile(r"\b(?:place|places|placed|put|puts|left|leaves)\b", re.I)),
-    ("enters", re.compile(r"\b(?:enter|enters|entered|arrive|arrives|arrived)\b", re.I)),
-    ("exits", re.compile(r"\b(?:exit|exits|exited|leave|leaves|left)\b", re.I)),
+    ("places", re.compile(r"\b(?:place|places|placed|placing|put|puts|putting)\b", re.I)),
+    (
+        "enters",
+        re.compile(
+            r"\b(?:enter|enters|entered|entering|arrive|arrives|arrived|arriving)\b",
+            re.I,
+        ),
+    ),
+    (
+        "exits",
+        re.compile(
+            r"\b(?:exit|exits|exited|exiting|depart|departs|departed|departing)\b",
+            re.I,
+        ),
+    ),
     ("carries", re.compile(r"\b(?:carry|carries|carried|carrying)\b", re.I)),
     ("follows", re.compile(r"\b(?:follow|follows|followed|following)\b", re.I)),
 )
+
+# The one genuinely ambiguous verb. Resolved by what it governs, not by pattern
+# order, so a single occurrence yields exactly one action atom.
+LEFT_VERB_RE = re.compile(r"\b(?:left|leaves|leaving)\b", re.I)
+_LEFT_OBJECT_RE = re.compile(
+    r"^\S+\s+(?:the|a|an|his|her|their|its)?\s*([a-z]+)", re.I
+)
+
+
+def _left_verb_sense(text: str, start: int) -> str:
+    """"left the bag" places an object; "left the lobby" is a departure.
+
+    Decided by whether the governed noun is a known location or a known object.
+    An unqualified "left" (no governed noun we recognise) reads as departure,
+    which is the more common surveillance sense.
+    """
+    match = _LEFT_OBJECT_RE.match(text[start : start + 64])
+    following = (match.group(1).lower() if match else "")
+    if following in LOCATION_WORDS:
+        return "exits"
+    if following in OBJECT_WORDS:
+        return "places"
+    return "exits"
+
+
+def _action_hits(text: str) -> list[tuple[int, str]]:
+    """Action atoms as (source offset, canonical), one per matched span.
+
+    Deduplicating by offset is what stops a single word from producing two
+    action atoms; _extract_temporal then relates distinct events rather than
+    two readings of the same word.
+    """
+    hits: dict[int, str] = {}
+    for canonical, pattern in ACTION_PATTERNS:
+        for match in pattern.finditer(text):
+            hits.setdefault(match.start(), canonical)
+    for match in LEFT_VERB_RE.finditer(text):
+        hits.setdefault(match.start(), _left_verb_sense(text, match.start()))
+    return sorted(hits.items())
 RELATION_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("carries", re.compile(r"\b(?:carry|carries|carried|carrying)\b", re.I)),
     ("near", re.compile(r"\b(?:near|beside|next\s+to)\b", re.I)),
@@ -269,12 +343,7 @@ def _extract_atoms(text: str) -> list[QueryAtom]:
                 (colour, AtomType.ATTRIBUTE, AtomRole.CANDIDATE_ANCHOR)
             )
 
-    action_hits = [
-        (match.start(), canonical)
-        for canonical, pattern in ACTION_PATTERNS
-        if (match := pattern.search(text)) is not None
-    ]
-    for _position, canonical in sorted(action_hits):
+    for _position, canonical in _action_hits(text):
         candidates.append((canonical, AtomType.ACTION, AtomRole.CANDIDATE_ANCHOR))
 
     tokens = re.findall(r"[a-z]+", lowered)
@@ -380,7 +449,28 @@ def _extract_temporal(text: str, atoms: list[QueryAtom]) -> list[TemporalRelatio
     if not match or len(actions) < 2:
         return []
     marker = match.group(1).lower()
-    first, second = actions[0], actions[1]
+
+    # Relate the actions the marker actually sits between, not simply the first
+    # two in the atom list. With three or more actions ("places a box then walks
+    # away after entering"), actions[0]/actions[1] can name a pair the user never
+    # related (CR-002 finding 6).
+    by_canonical: dict[str, QueryAtom] = {}
+    for atom in actions:
+        by_canonical.setdefault(atom.text_span, atom)
+    hits = _action_hits(text)
+    marker_at = match.start()
+    before_marker = [c for pos, c in hits if pos < marker_at and c in by_canonical]
+    after_marker = [c for pos, c in hits if pos > marker_at and c in by_canonical]
+
+    if before_marker and after_marker:
+        first = by_canonical[before_marker[-1]]
+        second = by_canonical[after_marker[0]]
+    else:
+        first, second = actions[0], actions[1]
+
+    if first.atom_id == second.atom_id:
+        return []
+
     relation = "after" if marker == "after" else "before"
     if relation == "after":
         first, second = second, first
@@ -406,6 +496,63 @@ def _parse_logic(
     text: str, atoms: list[QueryAtom], filters: QueryFilters
 ) -> tuple[list[QueryAtom], list[LogicGroup], QueryPlanData | None]:
     visible_none = VISIBLE_NONE_RE.search(text) or SIMPLE_VISIBLE_NONE_RE.search(text)
+
+    if NEGATED_ACTOR_RE.search(text) and not visible_none:
+        # Composite visible absence: none of the co-occurring anchors is visible
+        # together. Same scope safety as the single-target path below -- an
+        # absence claim is only safe inside one declared continuous interval or
+        # an assessable candidate episode (plan 14.3).
+        # The contract allows visible_none exactly one target atom, so the
+        # composite becomes one scene atom rather than a set. Targeting any
+        # single constituent would be wrong: a bag lying on a table must not
+        # make "no one is carrying a bag" false.
+        predicate = _normalise_phrase(NEGATED_ACTOR_RE.sub(" ", text))
+        predicate = re.sub(r"^\s*(?:is|are|was|were)\s+", "", predicate).strip()
+        if not predicate:
+            return atoms, [], _clarification(
+                text,
+                filters,
+                "ambiguous_visible_none",
+                "Which visible person, object, or action should be absent in the declared interval?",
+            )
+        composite = QueryAtom(
+            atom_id=f"a{len(atoms) + 1}",
+            text_span=f"person {predicate}".strip(),
+            type=AtomType.SCENE,
+            role=AtomRole.VERIFIER_ONLY,
+        )
+        atoms = [*atoms, composite]
+        explicit_scope = (
+            filters.start_time is not None
+            and filters.end_time is not None
+            and len(filters.camera_ids) <= 1
+            and len(filters.video_ids) <= 1
+            and bool(filters.camera_ids or filters.video_ids)
+        )
+        if (
+            len(filters.camera_ids) > 1
+            or len(filters.video_ids) > 1
+            or not explicit_scope
+        ):
+            return atoms, [], _clarification(
+                text,
+                filters,
+                "unbounded_visible_absence",
+                "Which single camera/video interval should be checked for visible absence?",
+            )
+        return (
+            atoms,
+            [
+                LogicGroup(
+                    group_id="g1",
+                    operator=LogicOperator.VISIBLE_NONE,
+                    atom_ids=(composite.atom_id,),
+                    observation_scope="continuous_camera_interval",
+                )
+            ],
+            None,
+        )
+
     if visible_none:
         target = _normalise_phrase(visible_none.group(1))
         if not target:
@@ -472,7 +619,7 @@ def _parse_logic(
                     group_id="g1",
                     operator=LogicOperator.VISIBLE_NONE,
                     atom_ids=(target_atom.atom_id,),
-                    observation_scope="camera_time_interval"
+                    observation_scope="continuous_camera_interval"
                     if filters.start_time is not None and filters.end_time is not None
                     else "candidate_episode",
                 )
@@ -542,7 +689,7 @@ def _parse_logic(
                     group_id="g1",
                     operator=LogicOperator.COUNT,
                     atom_ids=(atom_id,),
-                    observation_scope="camera_time_interval"
+                    observation_scope="continuous_camera_interval"
                     if filters.start_time is not None and filters.end_time is not None
                     else "candidate_episode",
                     min_count=min_count,
