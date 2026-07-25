@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "query_text": "A person places a black bag near the gate.",
+  "state": "clear",
+  "atoms": [
+    {
+      "atom_id": "a1",
+      "text_span": "person",
+      "type": "object",
+      "required": true,
+      "visibility_sensitive": true,
+      "role": "candidate_anchor"
+    },
+    {
+      "atom_id": "a2",
+      "text_span": "black bag",
+      "type": "object",
+      "required": true,
+      "visibility_sensitive": true,
+      "role": "candidate_anchor"
+    },
+    {
+      "atom_id": "a3",
+      "text_span": "gate",
+      "type": "location",
+      "required": true,
+      "visibility_sensitive": true,
+      "role": "filter"
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "r1",
+      "subject_atom": "a1",
+      "predicate": "places",
+      "object_atom": "a2",
+      "required": true
+    },
+    {
+      "relation_id": "r2",
+      "subject_atom": "a2",
+      "predicate": "near",
+      "object_atom": "a3",
+      "required": true
+    }
+  ],
+  "filters": {"camera_ids": ["gate-01"]},
+  "parser_version": "fixture-v1"
+}

@@ -1,0 +1,141 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0027",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_cross_b",
+  "session_ids": [
+    "sess_cross_b"
+  ],
+  "capability_tags": [
+    "temporal_order",
+    "action"
+  ],
+  "canonical_query": "a person leaves through the gate after putting down a box",
+  "paraphrases": [
+    {
+      "text": "someone exits the gate after setting a box down",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a person departs via the gate having placed a box",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_cross_b_v1"
+    ],
+    "camera_ids": [
+      "cam_cross"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_cross_b_v1",
+          "camera_id": "cam_cross",
+          "t0": 120.0,
+          "t1": 210.0,
+          "boundary": {
+            "start_pts": 120.0,
+            "end_pts": 210.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "a box",
+          "type": "object",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "puts down",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a4",
+          "text_span": "leaves through the gate",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "relations": [
+        {
+          "relation_id": "r1",
+          "subject_atom": "a1",
+          "predicate": "places",
+          "object_atom": "a2",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "temporal_relations": [
+        {
+          "first_atom": "a3",
+          "relation": "before",
+          "second_atom": "a4",
+          "same_actor_required": true,
+          "max_gap_s": 120
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 120.0,
+      "end_pts": 210.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0027a",
+      "family_id": "fam_0027",
+      "type": "wrong_order",
+      "description": "the person leaves and only afterwards a box appears",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point"
+      },
+      "synthetic": true
+    }
+  ]
+}

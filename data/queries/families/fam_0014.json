@@ -1,0 +1,120 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0014",
+  "pool": "staged",
+  "split": "dev",
+  "scenario_id": "scn_corr",
+  "session_ids": [
+    "sess_corr"
+  ],
+  "capability_tags": [
+    "visible_absence",
+    "empty_set"
+  ],
+  "canonical_query": "the corridor has no bag left in it for the whole clip",
+  "paraphrases": [
+    {
+      "text": "there is no bag anywhere in the corridor during the clip",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "no bag is present in the corridor at any point",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_corr_v1"
+    ],
+    "camera_ids": [
+      "cam_corr"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a bag",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "visibility_sensitive": true,
+          "gt_state": "contradicted"
+        }
+      ],
+      "logic_groups": [
+        {
+          "group_id": "g1",
+          "operator": "visible_none",
+          "atom_ids": [
+            "a1"
+          ],
+          "observation_scope": "candidate_episode",
+          "gt_outcome": "not_satisfied",
+          "min_count": null,
+          "max_count": null
+        }
+      ]
+    },
+    "track_logic": {
+      "visible_none_gt": [
+        {
+          "group_id": "g1",
+          "target": "bag",
+          "observation_interval": {
+            "video_id": "sess_corr_v1",
+            "camera_id": "cam_corr",
+            "t0": 0.0,
+            "t1": 420.0
+          },
+          "assessable": true,
+          "expected_observation_ticks": 420,
+          "observed_ticks_complete": true,
+          "expected_outcome": "visible_absence_supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0014a",
+      "family_id": "fam_0014",
+      "type": "visible_absence_unassessable",
+      "description": "the same claim over an occluded stretch cannot certify absence",
+      "expected": {
+        "archive_conclusion": "insufficient_visual_evidence",
+        "logic_outcome": "unobservable"
+      },
+      "synthetic": true
+    }
+  ],
+  "notes": "Assessable visible absence: absence can be certified because the region is assessable and observation ticks are complete."
+}

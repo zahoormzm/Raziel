@@ -1,0 +1,118 @@
+{
+  "golden_case_version": "1.0.0",
+  "case_id": "golden_01_object",
+  "required_index": 1,
+  "title": "Simple object",
+  "synthetic": true,
+  "family": {
+    "family_schema_version": "1.0.0",
+    "family_id": "gold_fam_01",
+    "pool": "staged",
+    "split": "test",
+    "scenario_id": "scn_golden",
+    "session_ids": [
+      "sess_golden"
+    ],
+    "capability_tags": [
+      "object",
+      "attribute",
+      "location"
+    ],
+    "canonical_query": "a black backpack near the gate",
+    "paraphrases": [
+      {
+        "text": "a dark backpack by the gate",
+        "author_id": "gold_a1",
+        "written_independently": true
+      },
+      {
+        "text": "a black rucksack at the gate",
+        "author_id": "gold_a2",
+        "written_independently": true
+      }
+    ],
+    "scope": {
+      "video_ids": [
+        "sess_golden_v1"
+      ],
+      "camera_ids": [
+        "cam_gold"
+      ],
+      "start_time": null,
+      "end_time": null,
+      "sampling_policy_version": "sampling-1.0.0"
+    },
+    "ground_truth": {
+      "intervals": {
+        "cardinality": "one",
+        "intervals": [
+          {
+            "video_id": "sess_golden_v1",
+            "camera_id": "cam_gold",
+            "t0": 40.0,
+            "t1": 52.0,
+            "boundary": {
+              "start_pts": 40.0,
+              "end_pts": 52.0,
+              "tolerance_s": 1.0,
+              "source": "human_ledger"
+            }
+          }
+        ]
+      },
+      "atoms_relations": {
+        "atoms": [
+          {
+            "atom_id": "a1",
+            "text_span": "black backpack",
+            "type": "object",
+            "required": true,
+            "role": "candidate_anchor",
+            "visibility_sensitive": true,
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a2",
+            "text_span": "black",
+            "type": "attribute",
+            "required": true,
+            "visibility_sensitive": true,
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a3",
+            "text_span": "the gate",
+            "type": "location",
+            "required": true,
+            "role": "filter",
+            "gt_state": "supported"
+          }
+        ]
+      }
+    },
+    "labels": {
+      "assessability": {
+        "overall": "assessable",
+        "reasons": [
+          "clear"
+        ]
+      },
+      "boundary": {
+        "start_pts": 40.0,
+        "end_pts": 52.0,
+        "tolerance_s": 1.0,
+        "source": "human_ledger"
+      }
+    },
+    "ground_truth_source": "human_ledger",
+    "empty_set_review": {
+      "required": false,
+      "review_complete": false
+    },
+    "synthetic": true
+  },
+  "expected": {
+    "archive_conclusion": "verified_matches_found",
+    "headline_contains": "VERIFIED MATCH"
+  }
+}

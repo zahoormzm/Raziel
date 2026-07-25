@@ -1,0 +1,10 @@
+schema_version: "1.0.0"
+profile: "m4max"
+unverified_expected_memory_gib: 64
+roles:
+  - ui_orchestrator
+  - local_archive_replica
+  - exact_retrieval
+  - playback_export
+  - tested_mlx_fallback_only
+status: "hardware_not_present_on_current_node"

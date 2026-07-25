@@ -1,0 +1,143 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0011",
+  "pool": "staged",
+  "split": "dev",
+  "scenario_id": "scn_court",
+  "session_ids": [
+    "sess_court"
+  ],
+  "capability_tags": [
+    "bounded_count"
+  ],
+  "canonical_query": "count the people standing in the courtyard",
+  "paraphrases": [
+    {
+      "text": "how many people are standing in the courtyard",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "number of people gathered in the courtyard",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_court_v1"
+    ],
+    "camera_ids": [
+      "cam_court"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_court_v1",
+          "camera_id": "cam_court",
+          "t0": 40.0,
+          "t1": 120.0,
+          "boundary": {
+            "start_pts": 40.0,
+            "end_pts": 120.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "people standing",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        }
+      ],
+      "logic_groups": [
+        {
+          "group_id": "g1",
+          "operator": "count",
+          "atom_ids": [
+            "a1"
+          ],
+          "observation_scope": "continuous_camera_interval",
+          "gt_outcome": "satisfied",
+          "min_count": 1,
+          "max_count": 5
+        }
+      ]
+    },
+    "track_logic": {
+      "count_gt": [
+        {
+          "group_id": "g1",
+          "continuous_camera_interval": {
+            "video_id": "sess_court_v1",
+            "camera_id": "cam_court",
+            "t0": 40.0,
+            "t1": 120.0
+          },
+          "qualifying_tracklets": 2,
+          "declared_bound": 5,
+          "fragmentation_level": "none",
+          "occlusion_level": "none",
+          "expected_outcome": 2
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 40.0,
+      "end_pts": 120.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0011a",
+      "family_id": "fam_0011",
+      "type": "bounded_count_incorrect",
+      "description": "claiming three people when only two qualify",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "logic_outcome": "not_satisfied"
+      },
+      "synthetic": true
+    },
+    {
+      "challenger_id": "ch_0011b",
+      "family_id": "fam_0011",
+      "type": "track_fragmentation",
+      "description": "one person's track fragments into two; must not inflate the count",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "logic_outcome": "unresolved"
+      },
+      "synthetic": true
+    }
+  ]
+}

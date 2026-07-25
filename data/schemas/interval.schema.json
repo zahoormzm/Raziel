@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/interval.schema.json@1.0.0",
+  "title": "Zero / One / Many ground-truth intervals",
+  "description": "Ground-truth temporal intervals for a query family. Cardinality is derived from the number of intervals: zero -> empty-set, one -> single, many -> multiple. Empty-set (zero) requires full human review of the declared scope (§21.5). Intervals are same-video/same-camera; the system never infers identity across discontinuous gaps or cameras. See RAZIEL_Master_Execution_Plan_v1.3.md §21.3.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cardinality", "intervals"],
+  "properties": {
+    "cardinality": {
+      "enum": ["zero", "one", "many"],
+      "description": "Declared expected cardinality. MUST be consistent with len(intervals): zero->0, one->1, many->>=2 (enforced by eval/schema.py cross-field check)."
+    },
+    "intervals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Interval" }
+    }
+  },
+  "$defs": {
+    "Interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["video_id", "camera_id", "t0", "t1"],
+      "properties": {
+        "interval_id": { "type": "string" },
+        "video_id": { "type": "string", "minLength": 1 },
+        "camera_id": { "type": "string", "minLength": 1 },
+        "t0": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Start in source PTS seconds. Time is PTS-based, never frame_index/declared_fps."
+        },
+        "t1": {
+          "type": "number",
+          "minimum": 0,
+          "description": "End in source PTS seconds. Must satisfy t1 >= t0 (cross-field check)."
+        },
+        "repeated_event_group": {
+          "type": ["string", "null"],
+          "description": "Links occurrences that are the same recurring event (§21.4 repeated_events)."
+        },
+        "boundary": {
+          "$ref": "assessability_boundary.schema.json#/$defs/BoundaryLabel"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/challenger.schema.json@1.0.0",
+  "title": "Typed challenger",
+  "description": "A typed near-miss / distractor attached to a query family. Challengers are the evidence that the system rejects for the right reason. Types cover the full §21.4 list including track fragmentation, duplicate track, bounded disjunction, visible absence (assessable and unassessable), and bounded counts (correct and incorrect).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["challenger_id", "family_id", "type", "description", "expected", "synthetic"],
+  "properties": {
+    "challenger_id": { "type": "string", "minLength": 1 },
+    "family_id": { "type": "string", "minLength": 1 },
+    "type": {
+      "enum": [
+        "wrong_attribute",
+        "wrong_object",
+        "wrong_binding",
+        "wrong_order",
+        "partial_event",
+        "short_interruption",
+        "visually_similar_actor",
+        "unobservable",
+        "true_no_event",
+        "repeated_events",
+        "track_fragmentation",
+        "duplicate_track",
+        "bounded_disjunction",
+        "visible_absence_assessable",
+        "visible_absence_unassessable",
+        "bounded_count_correct",
+        "bounded_count_incorrect"
+      ]
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "footage_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where the challenger occurs. Same-camera/session scope.",
+      "properties": {
+        "session_id": { "type": "string" },
+        "video_id": { "type": "string" },
+        "camera_id": { "type": "string" },
+        "t0": { "type": "number", "minimum": 0 },
+        "t1": { "type": "number", "minimum": 0 }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["archive_conclusion"],
+      "description": "The correct system behaviour on this challenger, expressed in the frozen result vocabulary (§4).",
+      "properties": {
+        "archive_conclusion": {
+          "enum": [
+            "verified_matches_found",
+            "no_verified_match_at_operating_point",
+            "insufficient_visual_evidence",
+            "search_incomplete",
+            "not_applicable"
+          ]
+        },
+        "rejected_reason": {
+          "type": "string",
+          "description": "For near-miss rejection: which required constraint should be contradicted (e.g. 'black bag contradicted because bag is blue')."
+        },
+        "atom_states": {
+          "type": "array",
+          "description": "Optional per-atom expected states for this challenger.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["atom_id", "state"],
+            "properties": {
+              "atom_id": { "type": "string" },
+              "state": { "enum": ["supported", "contradicted", "unobservable"] }
+            }
+          }
+        },
+        "logic_outcome": {
+          "enum": ["satisfied", "not_satisfied", "unobservable", "unresolved"],
+          "description": "For logic/count/absence challengers: the required bounded-logic outcome."
+        }
+      }
+    },
+    "synthetic": { "type": "boolean" }
+  }
+}

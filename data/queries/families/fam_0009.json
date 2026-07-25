@@ -1,0 +1,106 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0009",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_entrance",
+  "session_ids": [
+    "sess_entrance"
+  ],
+  "capability_tags": [
+    "object",
+    "attribute",
+    "location"
+  ],
+  "canonical_query": "a white van at the entrance",
+  "paraphrases": [
+    {
+      "text": "a white delivery van at the entrance",
+      "author_id": "auth_3",
+      "written_independently": true
+    },
+    {
+      "text": "a pale-coloured van by the entrance",
+      "author_id": "auth_1",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_entrance_v1"
+    ],
+    "camera_ids": [
+      "cam_ent"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_entrance_v1",
+          "camera_id": "cam_ent",
+          "t0": 150.0,
+          "t1": 172.0,
+          "boundary": {
+            "start_pts": 150.0,
+            "end_pts": 172.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "van",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "white",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "the entrance",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 150.0,
+      "end_pts": 172.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true
+}

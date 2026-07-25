@@ -1,0 +1,134 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0030",
+  "pool": "staged",
+  "split": "dev",
+  "scenario_id": "scn_similar",
+  "session_ids": [
+    "sess_similar"
+  ],
+  "capability_tags": [
+    "binding",
+    "attribute",
+    "action"
+  ],
+  "canonical_query": "a person in a yellow vest opens the door",
+  "paraphrases": [
+    {
+      "text": "someone wearing a yellow hi-vis vest opens the door",
+      "author_id": "auth_2",
+      "written_independently": true
+    },
+    {
+      "text": "a yellow-vested person opens the door",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_similar_v1"
+    ],
+    "camera_ids": [
+      "cam_sim"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_similar_v1",
+          "camera_id": "cam_sim",
+          "t0": 260.0,
+          "t1": 270.0,
+          "boundary": {
+            "start_pts": 260.0,
+            "end_pts": 270.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "yellow vest",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "the door",
+          "type": "object",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a4",
+          "text_span": "opens",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "relations": [
+        {
+          "relation_id": "r1",
+          "subject_atom": "a1",
+          "predicate": "near",
+          "object_atom": "a3",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 260.0,
+      "end_pts": 270.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0030a",
+      "family_id": "fam_0030",
+      "type": "wrong_binding",
+      "description": "a person without a vest opens the door",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point"
+      },
+      "synthetic": true
+    }
+  ]
+}

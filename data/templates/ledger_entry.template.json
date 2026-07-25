@@ -1,0 +1,33 @@
+{
+  "_help_1": "GUIDANCE TEMPLATE — strip _help_* and replace FILL_... before validating against ledger_entry.schema.json.",
+  "_help_2": "Ledger-first: written by a human watching the footage in full. Never from a retriever.",
+  "ledger_schema_version": "1.0.0",
+  "entry_id": "FILL_unique_id",
+  "session_id": "FILL_session",
+  "camera_id": "FILL_camera",
+  "video_id": "FILL_video",
+  "start_pts": 0.0,
+  "end_pts": 0.0,
+  "_help_actors": "Anonymous per-camera ids only (P1, P2, ...). No names, faces, or cross-camera identity.",
+  "actors": [
+    {"anon_id": "P1", "role_description": "FILL", "appearance": ["FILL_broad_non_biometric_cue"]}
+  ],
+  "objects": [
+    {"obj_id": "o1", "label": "FILL", "attributes": ["FILL_broad_colour_or_type"]}
+  ],
+  "actions": [
+    {"action": "FILL", "actor_ref": "P1", "object_ref": "o1"}
+  ],
+  "relations": [
+    {"subject_ref": "P1", "predicate": "FILL_carries|near|wears|places|picks_up|follows", "object_ref": "o1"}
+  ],
+  "lighting": "FILL_good|low_light|dark|backlit|mixed",
+  "occlusion": "FILL_none|partial|heavy",
+  "repeated_event_group": null,
+  "confusable_of": null,
+  "_help_assessability": "overall assessable|partially_assessable|unassessable; reasons drive whether a downstream label may be unobservable.",
+  "assessability": {"overall": "assessable", "reasons": ["clear"]},
+  "provenance": {"annotator_id": "FILL", "annotated_at": "FILL_ISO_date", "source": "human_watch"},
+  "notes": "FILL_optional",
+  "synthetic": false
+}

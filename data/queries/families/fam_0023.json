@@ -1,0 +1,72 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0023",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_lobby",
+  "session_ids": [
+    "sess_lobby"
+  ],
+  "capability_tags": [
+    "empty_set"
+  ],
+  "canonical_query": "a bicycle inside the lobby",
+  "paraphrases": [
+    {
+      "text": "a bike in the lobby",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a pushbike inside the lobby",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_lobby_v1"
+    ],
+    "camera_ids": [
+      "cam_lobby"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a bicycle",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true
+}

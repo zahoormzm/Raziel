@@ -1,0 +1,21 @@
+schema_version: "1.0.0"
+label: "development-unmeasured"
+status: "not_yet_measured"
+thresholds:
+  whole_query_frame: null
+  candidate_anchor_frame: null
+  rare_attribute_frame: null
+  native_clip: null
+  track_graph: null
+budgets:
+  verification_clusters: 12
+  verification_seconds: 60
+  graph_joins: 10000
+  assembled_episodes: 256
+gates:
+  candidate_recall_target: 0.95
+  verifier_macro_f1_target: 0.70
+  reranker_temporal_set_f1_absolute_gain: 0.03
+  reranker_vlm_call_reduction: 0.25
+  reranker_max_added_seconds: 1.0
+  measured: false

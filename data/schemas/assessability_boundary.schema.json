@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/assessability_boundary.schema.json@1.0.0",
+  "title": "Assessability and boundary labels",
+  "description": "Assessability records whether the supplied footage lets a human judge a claim ('the footage did not make this attribute assessable' vs a real verdict). Boundary labels record ground-truth event onset/offset and the tolerance used for boundary-error scoring. See RAZIEL_Master_Execution_Plan_v1.3.md §21.3, §17.4, §22.1(5).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assessability", "boundary"],
+  "properties": {
+    "assessability": { "$ref": "#/$defs/Assessability" },
+    "boundary": { "$ref": "#/$defs/BoundaryLabel" }
+  },
+  "$defs": {
+    "Assessability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["overall", "reasons"],
+      "properties": {
+        "overall": {
+          "enum": ["assessable", "partially_assessable", "unassessable"],
+          "description": "Whether the declared observation region can be judged at all. Unassessable regions can never become a clean negative; visible_none over an unassessable region is unobservable."
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "enum": ["clear", "occlusion", "low_light", "dark", "out_of_frame", "resolution", "motion_blur", "backlit", "missing_coverage"]
+          },
+          "description": "Why a region is (un)assessable. `missing_coverage` (absent expected observation ticks) forces unobservable/undetermined, never a clean negative."
+        },
+        "per_attribute": {
+          "type": "array",
+          "description": "Optional per-attribute assessability, e.g. bag colour assessable but bag contents not.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["attribute", "assessable"],
+            "properties": {
+              "attribute": { "type": "string" },
+              "assessable": { "type": "boolean" },
+              "reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "BoundaryLabel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_pts", "end_pts", "tolerance_s", "source"],
+      "properties": {
+        "start_pts": { "type": "number", "minimum": 0, "description": "Ground-truth onset in source PTS seconds." },
+        "end_pts": { "type": "number", "minimum": 0, "description": "Ground-truth offset in source PTS seconds (>= start_pts)." },
+        "tolerance_s": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Human boundary tolerance; boundary-error metrics are reported against this."
+        },
+        "source": {
+          "enum": ["human_ledger", "human_adjudicated"],
+          "description": "Boundary truth is human-derived. Retriever/auto proposals may accelerate development but never define test-boundary truth (§21.5)."
+        }
+      }
+    }
+  }
+}

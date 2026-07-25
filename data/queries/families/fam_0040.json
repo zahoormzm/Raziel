@@ -1,0 +1,134 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0040",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_hat",
+  "session_ids": [
+    "sess_hat"
+  ],
+  "capability_tags": [
+    "bounded_or",
+    "attribute"
+  ],
+  "canonical_query": "a person in a red or yellow jacket",
+  "paraphrases": [
+    {
+      "text": "someone wearing a red or yellow coat",
+      "author_id": "auth_3",
+      "written_independently": true
+    },
+    {
+      "text": "a person whose jacket is red or yellow",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_hat_v1"
+    ],
+    "camera_ids": [
+      "cam_hat"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_hat_v1",
+          "camera_id": "cam_hat",
+          "t0": 300.0,
+          "t1": 312.0,
+          "boundary": {
+            "start_pts": 300.0,
+            "end_pts": 312.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "red jacket",
+          "type": "attribute",
+          "required": false,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "yellow jacket",
+          "type": "attribute",
+          "required": false,
+          "visibility_sensitive": true,
+          "gt_state": "contradicted"
+        }
+      ],
+      "logic_groups": [
+        {
+          "group_id": "g1",
+          "operator": "any",
+          "atom_ids": [
+            "a2",
+            "a3"
+          ],
+          "observation_scope": "candidate_episode",
+          "gt_outcome": "satisfied",
+          "min_count": null,
+          "max_count": null
+        }
+      ]
+    },
+    "track_logic": {
+      "disjunction_gt": [
+        {
+          "group_id": "g1",
+          "alternatives": [
+            "red jacket",
+            "yellow jacket"
+          ],
+          "present_alternatives": [
+            "red jacket"
+          ],
+          "expected_outcome": "satisfied"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 300.0,
+      "end_pts": 312.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true
+}

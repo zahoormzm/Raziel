@@ -1,0 +1,145 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0018",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_hat",
+  "session_ids": [
+    "sess_hat"
+  ],
+  "capability_tags": [
+    "bounded_or",
+    "attribute",
+    "binding"
+  ],
+  "canonical_query": "someone carrying a red or green bag",
+  "paraphrases": [
+    {
+      "text": "a person with a red or green bag",
+      "author_id": "auth_2",
+      "written_independently": true
+    },
+    {
+      "text": "somebody holding a bag that is red or green",
+      "author_id": "auth_1",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_hat_v1"
+    ],
+    "camera_ids": [
+      "cam_hat"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_hat_v1",
+          "camera_id": "cam_hat",
+          "t0": 180.0,
+          "t1": 194.0,
+          "boundary": {
+            "start_pts": 180.0,
+            "end_pts": 194.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "someone",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "red bag",
+          "type": "attribute",
+          "required": false,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "green bag",
+          "type": "attribute",
+          "required": false,
+          "visibility_sensitive": true,
+          "gt_state": "contradicted"
+        }
+      ],
+      "relations": [
+        {
+          "relation_id": "r1",
+          "subject_atom": "a1",
+          "predicate": "carries",
+          "object_atom": "a2",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "logic_groups": [
+        {
+          "group_id": "g1",
+          "operator": "any",
+          "atom_ids": [
+            "a2",
+            "a3"
+          ],
+          "observation_scope": "candidate_episode",
+          "gt_outcome": "satisfied",
+          "min_count": null,
+          "max_count": null
+        }
+      ]
+    },
+    "track_logic": {
+      "disjunction_gt": [
+        {
+          "group_id": "g1",
+          "alternatives": [
+            "red bag",
+            "green bag"
+          ],
+          "present_alternatives": [
+            "red bag"
+          ],
+          "expected_outcome": "satisfied"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 180.0,
+      "end_pts": 194.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true
+}

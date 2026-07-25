@@ -1,0 +1,9 @@
+schema_version: "1.0.0"
+profile: "rtx5090_or_cloud"
+optional: true
+roles:
+  - faster_ablations
+  - larger_batches
+  - 8b_verifier_experiments
+  - lora_sweeps_after_data_gate
+final_demo_dependency: false

@@ -1,0 +1,91 @@
+{
+  "golden_case_version": "1.0.0",
+  "case_id": "golden_06_absent",
+  "required_index": 6,
+  "title": "Absent / no-match",
+  "synthetic": true,
+  "family": {
+    "family_schema_version": "1.0.0",
+    "family_id": "gold_fam_06",
+    "pool": "staged",
+    "split": "test",
+    "scenario_id": "scn_golden",
+    "session_ids": [
+      "sess_golden"
+    ],
+    "capability_tags": [
+      "empty_set"
+    ],
+    "canonical_query": "a person carrying a yellow umbrella",
+    "paraphrases": [
+      {
+        "text": "someone with a yellow umbrella",
+        "author_id": "gold_a2",
+        "written_independently": true
+      },
+      {
+        "text": "a person holding a yellow brolly",
+        "author_id": "gold_a1",
+        "written_independently": true
+      }
+    ],
+    "scope": {
+      "video_ids": [
+        "sess_golden_v1"
+      ],
+      "camera_ids": [
+        "cam_gold"
+      ],
+      "start_time": null,
+      "end_time": null,
+      "sampling_policy_version": "sampling-1.0.0"
+    },
+    "ground_truth": {
+      "intervals": {
+        "cardinality": "zero",
+        "intervals": []
+      },
+      "atoms_relations": {
+        "atoms": [
+          {
+            "atom_id": "a1",
+            "text_span": "a person",
+            "type": "object",
+            "required": true,
+            "role": "candidate_anchor"
+          },
+          {
+            "atom_id": "a2",
+            "text_span": "yellow umbrella",
+            "type": "object",
+            "required": true,
+            "visibility_sensitive": true
+          }
+        ]
+      }
+    },
+    "labels": {
+      "assessability": {
+        "overall": "assessable",
+        "reasons": [
+          "clear"
+        ]
+      }
+    },
+    "ground_truth_source": "human_ledger",
+    "empty_set_review": {
+      "required": true,
+      "reviewed_by": [
+        "annotator_A1",
+        "annotator_A2"
+      ],
+      "review_complete": true
+    },
+    "synthetic": true,
+    "notes": "Reviewed full scope; no such event."
+  },
+  "expected": {
+    "archive_conclusion": "no_verified_match_at_operating_point",
+    "headline_contains": "NO VERIFIED MATCH"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "fixture_id": "golden-synthetic-v1",
+  "path": "tests/golden/golden_synthetic.mp4",
+  "purpose": [
+    "pts_ingestion",
+    "coverage_ledger",
+    "restart_idempotence",
+    "window_assembly",
+    "playback",
+    "traceable_export"
+  ],
+  "semantic_benchmark": false,
+  "held_out_evaluation": false,
+  "synthetic": true,
+  "sha256": "2d4a4211e563de214a46495bccf915aa2d4ab89a4e33b993c6bb6556d9e2690c",
+  "size_bytes": 11329,
+  "duration_s": 120.0,
+  "video": {
+    "codec_name": "h264",
+    "avg_frame_rate": "2/1",
+    "time_base": "1/16384",
+    "nb_frames": 240,
+    "width": 320,
+    "height": 180
+  },
+  "generator": {
+    "script": "tests/golden/generate_fixture.ps1",
+    "ffmpeg_version": "N-125748-g80eb9e99b9-20260723",
+    "ffmpeg_build_archive_sha256": "9e3f3eab66b161d32db1aec08fe2d6401594d2b0cd0177128add222c98ca34d9"
+  }
+}

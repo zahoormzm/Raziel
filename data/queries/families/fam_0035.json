@@ -1,0 +1,98 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0035",
+  "pool": "organizer",
+  "split": "train",
+  "scenario_id": "scn_org_a",
+  "session_ids": [
+    "sess_org_a"
+  ],
+  "capability_tags": [
+    "object",
+    "location"
+  ],
+  "canonical_query": "a delivery truck at the dock",
+  "paraphrases": [
+    {
+      "text": "a delivery lorry by the dock",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a goods truck at the loading dock",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_org_a_v1"
+    ],
+    "camera_ids": [
+      "cam_orgA"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_org_a_v1",
+          "camera_id": "cam_orgA",
+          "t0": 80.0,
+          "t1": 130.0,
+          "boundary": {
+            "start_pts": 80.0,
+            "end_pts": 130.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "delivery truck",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "the dock",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 80.0,
+      "end_pts": 130.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "notes": "Organizer pool, authorization PENDING (§21.2). Synthetic placeholder until real organizer footage is delivered and a real manifest is sealed."
+}

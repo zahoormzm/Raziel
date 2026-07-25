@@ -1,0 +1,98 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0037",
+  "pool": "organizer",
+  "split": "test",
+  "scenario_id": "scn_org_b",
+  "session_ids": [
+    "sess_org_b"
+  ],
+  "capability_tags": [
+    "object",
+    "attribute"
+  ],
+  "canonical_query": "a person in a hi-vis jacket",
+  "paraphrases": [
+    {
+      "text": "someone wearing a high-visibility jacket",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a person in a reflective hi-vis coat",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_org_b_v1"
+    ],
+    "camera_ids": [
+      "cam_orgB"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_org_b_v1",
+          "camera_id": "cam_orgB",
+          "t0": 45.0,
+          "t1": 60.0,
+          "boundary": {
+            "start_pts": 45.0,
+            "end_pts": 60.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "hi-vis jacket",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 45.0,
+      "end_pts": 60.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "notes": "Organizer pool, authorization PENDING."
+}

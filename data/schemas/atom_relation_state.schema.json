@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/atom_relation_state.schema.json@1.0.0",
+  "title": "Atom / relation / logic-group ground-truth states",
+  "description": "Ground-truth atoms, relations, temporal relations, and bounded-logic groups for a query family, each with its human-labeled evidence state. Ground-truth labels use only supported/contradicted/unobservable. `undetermined` is a SYSTEM failure state (verifier could not decide) and is never a ground-truth label (§4.1, §22.1(4)). Mirrors the parser atom schema in §13.1 so labels line up with QueryPlan atoms owned by Member 2.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["atoms"],
+  "properties": {
+    "atoms": { "type": "array", "items": { "$ref": "#/$defs/Atom" } },
+    "relations": { "type": "array", "items": { "$ref": "#/$defs/Relation" } },
+    "temporal_relations": { "type": "array", "items": { "$ref": "#/$defs/TemporalRelation" } },
+    "logic_groups": { "type": "array", "items": { "$ref": "#/$defs/LogicGroup" } }
+  },
+  "$defs": {
+    "GroundTruthState": {
+      "enum": ["supported", "contradicted", "unobservable"],
+      "description": "Human ground-truth label. Excludes `undetermined`, which is only ever a system output."
+    },
+    "Atom": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "gt_state is present for families with at least one ground-truth interval (a target event to judge). It is omitted for empty-set (cardinality=zero) families, which have no target candidate to assign a per-atom evidence state.",
+      "required": ["atom_id", "text_span", "type", "required"],
+      "properties": {
+        "atom_id": { "type": "string", "minLength": 1 },
+        "text_span": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Quotes or maps directly to a span of the request; the parser cannot invent attributes (§13.2)."
+        },
+        "type": { "enum": ["object", "attribute", "action", "location", "relation", "temporal", "scene"] },
+        "required": { "type": "boolean" },
+        "visibility_sensitive": { "type": "boolean" },
+        "role": { "enum": ["candidate_anchor", "verifier_only", "filter", "weak_context"] },
+        "gt_state": { "$ref": "#/$defs/GroundTruthState" },
+        "gt_reason": {
+          "enum": ["visible_match", "visible_mismatch", "occlusion", "low_light", "out_of_frame", "insufficient_context", "not_applicable"],
+          "description": "Human reason aligned with the verifier reason_code vocabulary (§17.2), excluding system-failure reasons."
+        }
+      }
+    },
+    "Relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation_id", "subject_atom", "predicate", "object_atom", "required"],
+      "properties": {
+        "relation_id": { "type": "string", "minLength": 1 },
+        "subject_atom": { "type": "string", "minLength": 1 },
+        "predicate": {
+          "enum": ["carries", "near", "wears", "places", "picks_up", "follows"],
+          "description": "Supported relation predicates (§13.1). Relations do not become independent object claims."
+        },
+        "object_atom": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "gt_state": { "$ref": "#/$defs/GroundTruthState" }
+      }
+    },
+    "TemporalRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["first_atom", "relation", "second_atom"],
+      "properties": {
+        "first_atom": { "type": "string", "minLength": 1 },
+        "relation": { "enum": ["before", "after"] },
+        "second_atom": { "type": "string", "minLength": 1 },
+        "max_gap_s": { "type": "number", "minimum": 0 },
+        "same_actor_required": {
+          "type": "boolean",
+          "description": "Short, visually-continuous same-actor binding only. Long-gap same_actor_required=true is unsupported and rejected before retrieval (§13.2)."
+        }
+      }
+    },
+    "LogicGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["group_id", "operator", "atom_ids", "observation_scope", "gt_outcome"],
+      "properties": {
+        "group_id": { "type": "string", "minLength": 1 },
+        "operator": {
+          "enum": ["all", "any", "visible_none", "count"],
+          "description": "Supported bounded algebra only. `any`=bounded OR over a small visible list; `visible_none`=visible absence inside one assessable episode; `count`=small cardinality over anonymous tracklets in one continuous camera interval (§2.2, §13.2)."
+        },
+        "atom_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "observation_scope": {
+          "enum": ["candidate_episode", "continuous_camera_interval"],
+          "description": "Formal observation interval the operator runs inside. `visible_none`/`count` are only decisive when this scope is assessable and observation ticks are complete."
+        },
+        "min_count": { "type": ["integer", "null"], "minimum": 0 },
+        "max_count": { "type": ["integer", "null"], "minimum": 0 },
+        "gt_outcome": {
+          "enum": ["satisfied", "not_satisfied", "unobservable", "unresolved"],
+          "description": "Human ground-truth outcome. `unresolved` is required when fragmentation/occlusion/missing coverage make the predicate unsafe (§14.3); `unobservable` when the region cannot be judged."
+        }
+      }
+    }
+  }
+}

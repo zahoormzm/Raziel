@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/track_logic_ground_truth.schema.json@1.0.0",
+  "title": "Track / logic ground truth (OR, visible_none, bounded counts, occlusion, fragmentation)",
+  "description": "Ground truth for the bounded-logic and track-derived predicates. Encodes the safety rules from §2.2, §14.3, §22.1(9-10): visible_none requires an assessable observation interval with complete expected observation ticks; counts are over qualifying anonymous tracklets in ONE continuous camera interval and must become `unresolved` under unsafe fragmentation/occlusion. Missing coverage can never become a clean negative.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "disjunction_gt": { "type": "array", "items": { "$ref": "#/$defs/DisjunctionGT" } },
+    "visible_none_gt": { "type": "array", "items": { "$ref": "#/$defs/VisibleNoneGT" } },
+    "count_gt": { "type": "array", "items": { "$ref": "#/$defs/CountGT" } }
+  },
+  "$defs": {
+    "ObservationInterval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["video_id", "camera_id", "t0", "t1"],
+      "properties": {
+        "video_id": { "type": "string", "minLength": 1 },
+        "camera_id": { "type": "string", "minLength": 1 },
+        "t0": { "type": "number", "minimum": 0 },
+        "t1": { "type": "number", "minimum": 0 }
+      }
+    },
+    "DisjunctionGT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["group_id", "alternatives", "present_alternatives", "expected_outcome"],
+      "properties": {
+        "group_id": { "type": "string", "minLength": 1 },
+        "alternatives": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string" },
+          "description": "Small, explicit list of visible alternatives (bounded OR). No open-world reading."
+        },
+        "present_alternatives": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Which alternatives are actually visibly present in the assessable scope."
+        },
+        "expected_outcome": { "enum": ["satisfied", "not_satisfied", "unobservable", "unresolved"] }
+      }
+    },
+    "VisibleNoneGT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["group_id", "target", "observation_interval", "assessable", "expected_observation_ticks", "observed_ticks_complete", "expected_outcome"],
+      "properties": {
+        "group_id": { "type": "string", "minLength": 1 },
+        "target": {
+          "type": "string",
+          "description": "The object/attribute whose visible absence is asserted inside the interval."
+        },
+        "observation_interval": { "$ref": "#/$defs/ObservationInterval" },
+        "assessable": {
+          "type": "boolean",
+          "description": "Whether the target region is assessable throughout the interval."
+        },
+        "expected_observation_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of sampling ticks that MUST be present to certify absence."
+        },
+        "observed_ticks_complete": {
+          "type": "boolean",
+          "description": "Whether all expected observation ticks are actually present. If false, absence cannot be certified."
+        },
+        "expected_outcome": {
+          "enum": ["visible_absence_supported", "present_contradicted", "unobservable", "unresolved"],
+          "description": "visible_absence_supported requires assessable=true AND observed_ticks_complete=true. Otherwise unobservable (region unjudgeable) or unresolved (missing coverage) — never a clean negative (§14.3). Enforced by eval/schema.py cross-field check."
+        }
+      }
+    },
+    "CountGT": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["group_id", "continuous_camera_interval", "qualifying_tracklets", "declared_bound", "fragmentation_level", "occlusion_level", "expected_outcome"],
+      "properties": {
+        "group_id": { "type": "string", "minLength": 1 },
+        "continuous_camera_interval": { "$ref": "#/$defs/ObservationInterval" },
+        "qualifying_tracklets": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Ground-truth count of qualifying anonymous tracklets in ONE continuous camera interval. Never crosses cameras or discontinuous intervals."
+        },
+        "declared_bound": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Configured maximum bound. Counts exceeding the bound route to clarification/unsupported (§3.3)."
+        },
+        "fragmentation_level": {
+          "enum": ["none", "low", "high"],
+          "description": "Track fragmentation severity. `high` forces `unresolved` regardless of raw count."
+        },
+        "occlusion_level": {
+          "enum": ["none", "partial", "heavy"],
+          "description": "Occlusion severity. `heavy` forces `unresolved`/`unobservable`."
+        },
+        "expected_outcome": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0 },
+            { "const": "unresolved" }
+          ],
+          "description": "Either an integer count (only safe when fragmentation/occlusion are not severe and the count is within the declared bound) or the literal `unresolved`. Enforced by eval/schema.py cross-field check."
+        }
+      }
+    }
+  }
+}

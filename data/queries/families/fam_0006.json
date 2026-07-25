@@ -1,0 +1,155 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0006",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_gate_b",
+  "session_ids": [
+    "sess_gate_b"
+  ],
+  "capability_tags": [
+    "object",
+    "attribute",
+    "binding",
+    "action"
+  ],
+  "canonical_query": "a person in a red top drops a dark bag at the gate",
+  "paraphrases": [
+    {
+      "text": "someone wearing a red shirt sets a dark bag at the gate",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a red-topped person lets a dark bag down by the gate",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_gate_b_v1"
+    ],
+    "camera_ids": [
+      "cam_gate"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_gate_b_v1",
+          "camera_id": "cam_gate",
+          "t0": 205.0,
+          "t1": 219.0,
+          "boundary": {
+            "start_pts": 205.0,
+            "end_pts": 219.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "red top",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "dark bag",
+          "type": "object",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a4",
+          "text_span": "the gate",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a5",
+          "text_span": "drops",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "relations": [
+        {
+          "relation_id": "r1",
+          "subject_atom": "a1",
+          "predicate": "places",
+          "object_atom": "a3",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 205.0,
+      "end_pts": 219.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0006a",
+      "family_id": "fam_0006",
+      "type": "wrong_binding",
+      "description": "a person NOT in red drops the bag",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "rejected_reason": "binding contradicted"
+      },
+      "synthetic": true
+    },
+    {
+      "challenger_id": "ch_0006b",
+      "family_id": "fam_0006",
+      "type": "wrong_order",
+      "description": "bag is already down before the red person arrives",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point"
+      },
+      "synthetic": true
+    }
+  ]
+}

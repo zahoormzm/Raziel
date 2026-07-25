@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/footage_session_manifest.schema.json@1.0.0",
+  "title": "Footage / Session Manifest (immutable, content-hashed)",
+  "description": "Dataset-lane record of a collected footage session. This is NOT the ingestion VideoManifest contract owned by Member 1 (packages/contracts/video_manifest.py); it is the science-lane provenance and split-anchor record. It is immutable: `content_hash` is the SHA-256 over canonical JSON with the `content_hash` field omitted. Any edit changes the hash and is detectable. See data/ledger.md and RAZIEL_Master_Execution_Plan_v1.3.md §21.5/§26.1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_schema_version",
+    "session_id",
+    "scenario_id",
+    "pool",
+    "camera_ids",
+    "footage_files",
+    "authorization",
+    "provenance",
+    "synthetic",
+    "created_at",
+    "content_hash"
+  ],
+  "properties": {
+    "manifest_schema_version": { "const": "1.0.0" },
+    "session_id": {
+      "type": "string",
+      "description": "Stable session identifier. Splits are assigned by scenario/session, never by adjacent windows or file names.",
+      "minLength": 1
+    },
+    "scenario_id": {
+      "type": "string",
+      "description": "Scenario grouping used as the split unit. All sessions of one scenario MUST land in the same train/dev/test split.",
+      "minLength": 1
+    },
+    "pool": {
+      "enum": ["staged", "organizer"],
+      "description": "Provenance pool. Staged and organizer pools are kept strictly separate (§21.5)."
+    },
+    "camera_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Camera identifiers present in this session. Tracklet/actor identifiers are scoped to one camera/session and never imply biometric identity."
+    },
+    "footage_files": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/FootageFile" }
+    },
+    "authorization": { "$ref": "#/$defs/Authorization" },
+    "provenance": { "$ref": "#/$defs/Provenance" },
+    "synthetic": {
+      "type": "boolean",
+      "description": "True for deterministic synthetic fixtures used only for code tests. Real footage manifests set this false. No fabricated footage is ever labeled real."
+    },
+    "notes": { "type": "string" },
+    "created_at": {
+      "type": "string",
+      "description": "ISO-8601 timestamp the manifest was sealed."
+    },
+    "content_hash": {
+      "type": "string",
+      "description": "SHA-256 (hex) over canonical JSON of this object with `content_hash` omitted. Immutability check.",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$defs": {
+    "FootageFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file_id", "camera_id", "source_sha256", "duration_s", "synthetic"],
+      "properties": {
+        "file_id": { "type": "string", "minLength": 1 },
+        "camera_id": { "type": "string", "minLength": 1 },
+        "logical_path": {
+          "type": "string",
+          "description": "Logical/relative reference. Raw footage is not stored in the repo; the manifest references it by id and hash."
+        },
+        "source_sha256": {
+          "type": "string",
+          "description": "Streamed SHA-256 of the source file. For synthetic fixtures this is the hash of the synthetic descriptor, and `synthetic` is true.",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "duration_s": { "type": "number", "minimum": 0 },
+        "codec": { "type": "string" },
+        "container": { "type": "string" },
+        "declared_fps": { "type": "number", "minimum": 0 },
+        "recording_start": {
+          "type": ["string", "null"],
+          "description": "Absolute recording start if known; time is read from PTS by ingestion, never inferred as frame_index/declared_fps."
+        },
+        "timebase": { "type": ["string", "null"] },
+        "synthetic": { "type": "boolean" }
+      }
+    },
+    "Authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "consent_recorded"],
+      "properties": {
+        "status": {
+          "enum": ["authorized", "pending", "unauthorized"],
+          "description": "Footage authorization status (§21.7). Missing coverage or authorization can never be laundered into a clean negative."
+        },
+        "consent_recorded": {
+          "type": "boolean",
+          "description": "Whether participant consent is recorded for staged footage."
+        },
+        "retention_policy": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "Provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collected_by", "collection_date"],
+      "properties": {
+        "collected_by": { "type": "string", "minLength": 1 },
+        "collection_date": { "type": "string" },
+        "staged_scenario_description": {
+          "type": "string",
+          "description": "For staged pool: what was deliberately staged (repeated event, decoys, unobservable segment, etc.)."
+        },
+        "organizer_delivery_ref": {
+          "type": ["string", "null"],
+          "description": "For organizer pool: delivery reference/date."
+        }
+      }
+    }
+  }
+}

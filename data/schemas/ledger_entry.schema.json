@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/ledger_entry.schema.json@1.0.0",
+  "title": "Event ledger entry",
+  "description": "One notable-event entry in the ledger-first ground-truth backbone. The ledger, not retrieval output, is the ground truth (§21.1). Actors are anonymous, per-camera/session ids and NEVER biometric identity. Provenance records that the entry came from a human watching the footage in full, never from a retriever proposal. See data/ledger.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ledger_schema_version",
+    "entry_id",
+    "session_id",
+    "camera_id",
+    "video_id",
+    "start_pts",
+    "end_pts",
+    "actors",
+    "objects",
+    "actions",
+    "relations",
+    "lighting",
+    "occlusion",
+    "assessability",
+    "provenance",
+    "synthetic"
+  ],
+  "properties": {
+    "ledger_schema_version": { "const": "1.0.0" },
+    "entry_id": { "type": "string", "minLength": 1 },
+    "session_id": { "type": "string", "minLength": 1 },
+    "camera_id": { "type": "string", "minLength": 1 },
+    "video_id": { "type": "string", "minLength": 1 },
+    "start_pts": { "type": "number", "minimum": 0, "description": "Event onset in source PTS seconds." },
+    "end_pts": { "type": "number", "minimum": 0, "description": "Event offset in source PTS seconds (>= start_pts)." },
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["anon_id"],
+        "properties": {
+          "anon_id": {
+            "type": "string",
+            "pattern": "^P[0-9]+$",
+            "description": "Anonymous actor id scoped to this camera/session (e.g. P1, P2). Never a name, face, or cross-camera identity."
+          },
+          "role_description": { "type": "string" },
+          "appearance": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Broad, non-biometric appearance cues only (e.g. 'red upper clothing'). No facial/biometric descriptors."
+          }
+        }
+      }
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["obj_id", "label"],
+        "properties": {
+          "obj_id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "attributes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action"],
+        "properties": {
+          "action": { "type": "string", "minLength": 1 },
+          "actor_ref": { "type": "string" },
+          "object_ref": { "type": "string" }
+        }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["subject_ref", "predicate", "object_ref"],
+        "properties": {
+          "subject_ref": { "type": "string", "minLength": 1 },
+          "predicate": { "enum": ["carries", "near", "wears", "places", "picks_up", "follows"] },
+          "object_ref": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "lighting": { "enum": ["good", "low_light", "dark", "backlit", "mixed"] },
+    "occlusion": { "enum": ["none", "partial", "heavy"] },
+    "repeated_event_group": {
+      "type": ["string", "null"],
+      "description": "Non-null id shared across the >=3 occurrences of a recurring event (§21.2)."
+    },
+    "confusable_of": {
+      "type": ["string", "null"],
+      "description": "entry_id (or free text) of an event this one is easily confused with (partial event, wrong order, similar actor, etc.)."
+    },
+    "assessability": { "$ref": "assessability_boundary.schema.json#/$defs/Assessability" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["annotator_id", "annotated_at", "source"],
+      "properties": {
+        "annotator_id": { "type": "string", "minLength": 1 },
+        "annotated_at": { "type": "string" },
+        "source": {
+          "const": "human_watch",
+          "description": "Ledger entries are produced by a human watching footage in full. Retriever proposals are NEVER a ledger source (§21.1, §21.5)."
+        }
+      }
+    },
+    "notes": { "type": "string" },
+    "synthetic": { "type": "boolean" }
+  }
+}

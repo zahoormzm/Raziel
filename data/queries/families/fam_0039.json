@@ -1,0 +1,97 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0039",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_entrance",
+  "session_ids": [
+    "sess_entrance"
+  ],
+  "capability_tags": [
+    "object",
+    "location"
+  ],
+  "canonical_query": "a motorcycle by the entrance",
+  "paraphrases": [
+    {
+      "text": "a motorbike near the entrance",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a two-wheeler parked at the entrance",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_entrance_v1"
+    ],
+    "camera_ids": [
+      "cam_ent"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_entrance_v1",
+          "camera_id": "cam_ent",
+          "t0": 360.0,
+          "t1": 375.0,
+          "boundary": {
+            "start_pts": 360.0,
+            "end_pts": 375.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "motorcycle",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "the entrance",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 360.0,
+      "end_pts": 375.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true
+}

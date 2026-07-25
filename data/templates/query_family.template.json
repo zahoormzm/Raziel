@@ -1,0 +1,66 @@
+{
+  "_help_1": "GUIDANCE TEMPLATE — strip every _help_* key and replace FILL_... before validating.",
+  "_help_2": "Authoritative shape: data/schemas/query_family.schema.json. Protocol: data/ledger.md.",
+  "family_schema_version": "1.0.0",
+  "family_id": "FILL_unique_id_e.g._fam_0101",
+  "pool": "FILL_staged_or_organizer",
+  "split": "FILL_train_dev_or_test  (assigned by scenario/session; a scenario is one split)",
+  "scenario_id": "FILL_scenario_split_unit",
+  "session_ids": ["FILL_session_this_family_draws_truth_from"],
+  "capability_tags": ["FILL_e.g._object", "attribute", "binding"],
+  "canonical_query": "FILL_the natural-language query",
+  "paraphrases": [
+    {"text": "FILL_paraphrase_1", "author_id": "FILL_author_A", "written_independently": true},
+    {"text": "FILL_paraphrase_2 (DIFFERENT author, written blind)", "author_id": "FILL_author_B", "written_independently": true}
+  ],
+  "scope": {
+    "video_ids": ["FILL_video_id"],
+    "camera_ids": ["FILL_camera_id"],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "FILL_sampling_policy_version"
+  },
+  "ground_truth": {
+    "_help_intervals": "cardinality zero->0 intervals, one->1, many->>=2. Empty-set requires empty_set_review.",
+    "intervals": {
+      "cardinality": "FILL_zero_one_or_many",
+      "intervals": [
+        {"video_id": "FILL", "camera_id": "FILL", "t0": 0.0, "t1": 0.0,
+         "boundary": {"start_pts": 0.0, "end_pts": 0.0, "tolerance_s": 1.0, "source": "human_ledger"}}
+      ]
+    },
+    "_help_atoms": "gt_state is supported/contradicted/unobservable ONLY (never undetermined). Omit gt_state for empty-set families.",
+    "atoms_relations": {
+      "atoms": [
+        {"atom_id": "a1", "text_span": "FILL_span_from_query", "type": "FILL_object|attribute|action|location|relation|temporal|scene",
+         "required": true, "role": "candidate_anchor", "gt_state": "supported"}
+      ],
+      "relations": [
+        {"relation_id": "r1", "subject_atom": "a1", "predicate": "FILL_carries|near|wears|places|picks_up|follows",
+         "object_atom": "a2", "required": true, "gt_state": "supported"}
+      ],
+      "temporal_relations": [
+        {"first_atom": "a1", "relation": "before", "second_atom": "a2", "max_gap_s": 600, "same_actor_required": false}
+      ],
+      "logic_groups": [
+        {"group_id": "g1", "operator": "FILL_all|any|visible_none|count", "atom_ids": ["a1"],
+         "observation_scope": "candidate_episode", "min_count": null, "max_count": null, "gt_outcome": "satisfied"}
+      ]
+    },
+    "_help_track_logic": "Only for OR / visible_none / bounded-count families. See track_logic_ground_truth.schema.json.",
+    "track_logic": {}
+  },
+  "labels": {
+    "assessability": {"overall": "assessable", "reasons": ["clear"]},
+    "boundary": {"start_pts": 0.0, "end_pts": 0.0, "tolerance_s": 1.0, "source": "human_ledger"}
+  },
+  "challengers": [
+    {"challenger_id": "ch1", "family_id": "FILL_same_family_id", "type": "FILL_challenger_type",
+     "description": "FILL", "expected": {"archive_conclusion": "no_verified_match_at_operating_point",
+     "rejected_reason": "FILL_which_required_constraint_is_contradicted"}, "synthetic": false}
+  ],
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {"required": false, "reviewed_by": [], "review_complete": false},
+  "notes": "FILL_optional",
+  "synthetic": false
+}

@@ -1,0 +1,95 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0033",
+  "pool": "staged",
+  "split": "dev",
+  "scenario_id": "scn_longgap",
+  "session_ids": [
+    "sess_longgap"
+  ],
+  "capability_tags": [
+    "long_gap_identity_rejection",
+    "temporal_order"
+  ],
+  "canonical_query": "the same person who entered at the start leaves at the end, twenty minutes later",
+  "paraphrases": [
+    {
+      "text": "the identical individual from the opening returns to leave 20 minutes later",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "prove the person leaving at the end is the one who entered at the start",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_longgap_v1"
+    ],
+    "camera_ids": [
+      "cam_long"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "enters at the start",
+          "type": "action",
+          "required": true
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "leaves at the end",
+          "type": "action",
+          "required": true
+        }
+      ],
+      "temporal_relations": [
+        {
+          "first_atom": "a2",
+          "relation": "before",
+          "second_atom": "a3",
+          "same_actor_required": true,
+          "max_gap_s": 1200
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true,
+  "notes": "Long-gap same_actor_required=true across a 20-minute discontinuity is UNSUPPORTED (§3.3). Correct behaviour: reject before retrieval and offer an order-only alternative (enter-event before leave-event, without an identity claim)."
+}

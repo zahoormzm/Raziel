@@ -1,0 +1,8 @@
+# Lock input for the Python 3.11 core environment.
+# Generate a hash-pinned platform lock in the clean-environment build.
+pydantic==2.13.4
+numpy==2.4.2
+fastapi==0.116.1
+uvicorn==0.35.0
+av==15.1.0
+sentencepiece==0.2.1

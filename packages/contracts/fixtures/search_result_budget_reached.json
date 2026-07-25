@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "search_id": "fixture-budget",
+  "interpretation": {"query_text": "A person carrying a bag.", "state": "clear", "atoms": [], "parser_version": "fixture-v1"},
+  "scope": {"video_ids": ["golden-video"], "sampling_policy_version": "base-1fps-v1"},
+  "indexing": {"expected_ticks": 2, "embedded_ticks": 2, "decode_failed_ticks": 0, "skipped_ticks": 0, "scored_coverage": 1.0},
+  "candidate_generation": {"channels_run": ["whole_query_frame"], "qualifying_windows": 12, "candidate_recall_operating_point": "not_yet_measured", "exact_scoring_completed": true},
+  "graph_execution": {"enabled": false},
+  "assembly": {"anchor_candidates_qualifying": 12, "anchor_candidates_retained": 12, "episodes_generated": 12, "assembly_complete": true},
+  "verification": {"state": "budget_reached", "clusters_total": 12, "clusters_verified": 5, "seconds_used": 60.0},
+  "verified_matches": [],
+  "unresolved_visual": [],
+  "unresolved_system": [],
+  "rejected_near_misses": [],
+  "archive_conclusion": "search_incomplete"
+}

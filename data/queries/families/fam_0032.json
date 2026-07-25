@@ -1,0 +1,79 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0032",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_amb",
+  "session_ids": [
+    "sess_amb"
+  ],
+  "capability_tags": [
+    "ambiguous"
+  ],
+  "canonical_query": "a big bag somewhere",
+  "paraphrases": [
+    {
+      "text": "some large bag in the scene",
+      "author_id": "auth_3",
+      "written_independently": true
+    },
+    {
+      "text": "a sizeable bag anywhere here",
+      "author_id": "auth_1",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_amb_v1"
+    ],
+    "camera_ids": [
+      "cam_amb"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a bag",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "big",
+          "type": "attribute",
+          "required": true
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true,
+  "notes": "'big' is under-specified and 'somewhere' lacks scope -> clarification."
+}

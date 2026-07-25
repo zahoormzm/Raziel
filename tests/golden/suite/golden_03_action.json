@@ -1,0 +1,124 @@
+{
+  "golden_case_version": "1.0.0",
+  "case_id": "golden_03_action",
+  "required_index": 3,
+  "title": "Action",
+  "synthetic": true,
+  "family": {
+    "family_schema_version": "1.0.0",
+    "family_id": "gold_fam_03",
+    "pool": "staged",
+    "split": "test",
+    "scenario_id": "scn_golden",
+    "session_ids": [
+      "sess_golden"
+    ],
+    "capability_tags": [
+      "object",
+      "action"
+    ],
+    "canonical_query": "a person places a bag on the ground",
+    "paraphrases": [
+      {
+        "text": "someone sets a bag on the floor",
+        "author_id": "gold_a2",
+        "written_independently": true
+      },
+      {
+        "text": "a person puts a bag down",
+        "author_id": "gold_a1",
+        "written_independently": true
+      }
+    ],
+    "scope": {
+      "video_ids": [
+        "sess_golden_v1"
+      ],
+      "camera_ids": [
+        "cam_gold"
+      ],
+      "start_time": null,
+      "end_time": null,
+      "sampling_policy_version": "sampling-1.0.0"
+    },
+    "ground_truth": {
+      "intervals": {
+        "cardinality": "one",
+        "intervals": [
+          {
+            "video_id": "sess_golden_v1",
+            "camera_id": "cam_gold",
+            "t0": 210.0,
+            "t1": 224.0,
+            "boundary": {
+              "start_pts": 210.0,
+              "end_pts": 224.0,
+              "tolerance_s": 1.0,
+              "source": "human_ledger"
+            }
+          }
+        ]
+      },
+      "atoms_relations": {
+        "atoms": [
+          {
+            "atom_id": "a1",
+            "text_span": "a person",
+            "type": "object",
+            "required": true,
+            "role": "candidate_anchor",
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a2",
+            "text_span": "a bag",
+            "type": "object",
+            "required": true,
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a3",
+            "text_span": "places on the ground",
+            "type": "action",
+            "required": true,
+            "gt_state": "supported"
+          }
+        ],
+        "relations": [
+          {
+            "relation_id": "r1",
+            "subject_atom": "a1",
+            "predicate": "places",
+            "object_atom": "a2",
+            "required": true,
+            "gt_state": "supported"
+          }
+        ]
+      }
+    },
+    "labels": {
+      "assessability": {
+        "overall": "assessable",
+        "reasons": [
+          "clear"
+        ]
+      },
+      "boundary": {
+        "start_pts": 210.0,
+        "end_pts": 224.0,
+        "tolerance_s": 1.0,
+        "source": "human_ledger"
+      }
+    },
+    "ground_truth_source": "human_ledger",
+    "empty_set_review": {
+      "required": false,
+      "review_complete": false
+    },
+    "synthetic": true
+  },
+  "expected": {
+    "archive_conclusion": "verified_matches_found",
+    "headline_contains": "VERIFIED MATCH"
+  }
+}

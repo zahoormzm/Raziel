@@ -1,0 +1,79 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0024",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_lobby_b",
+  "session_ids": [
+    "sess_lobby_b"
+  ],
+  "capability_tags": [
+    "empty_set"
+  ],
+  "canonical_query": "a red suitcase left in the lobby",
+  "paraphrases": [
+    {
+      "text": "an abandoned red suitcase in the lobby",
+      "author_id": "auth_3",
+      "written_independently": true
+    },
+    {
+      "text": "a red case left unattended in the lobby",
+      "author_id": "auth_1",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_lobby_b_v1"
+    ],
+    "camera_ids": [
+      "cam_lobby"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a red suitcase",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "visibility_sensitive": true
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "left unattended",
+          "type": "action",
+          "required": true
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true
+}

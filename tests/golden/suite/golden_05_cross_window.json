@@ -1,0 +1,158 @@
+{
+  "golden_case_version": "1.0.0",
+  "case_id": "golden_05_cross_window",
+  "required_index": 5,
+  "title": "Cross-window order",
+  "synthetic": true,
+  "family": {
+    "family_schema_version": "1.0.0",
+    "family_id": "gold_fam_05",
+    "pool": "staged",
+    "split": "test",
+    "scenario_id": "scn_golden",
+    "session_ids": [
+      "sess_golden"
+    ],
+    "capability_tags": [
+      "temporal_order",
+      "action",
+      "binding",
+      "location"
+    ],
+    "canonical_query": "a person enters near the gate, then later leaves carrying a bag",
+    "paraphrases": [
+      {
+        "text": "someone comes in by the gate and afterwards exits with a bag",
+        "author_id": "gold_a1",
+        "written_independently": true
+      },
+      {
+        "text": "a person arrives at the gate and later departs holding a bag",
+        "author_id": "gold_a3",
+        "written_independently": true
+      }
+    ],
+    "scope": {
+      "video_ids": [
+        "sess_golden_v1"
+      ],
+      "camera_ids": [
+        "cam_gold"
+      ],
+      "start_time": null,
+      "end_time": null,
+      "sampling_policy_version": "sampling-1.0.0"
+    },
+    "ground_truth": {
+      "intervals": {
+        "cardinality": "one",
+        "intervals": [
+          {
+            "video_id": "sess_golden_v1",
+            "camera_id": "cam_gold",
+            "t0": 360.0,
+            "t1": 640.0,
+            "boundary": {
+              "start_pts": 360.0,
+              "end_pts": 640.0,
+              "tolerance_s": 1.0,
+              "source": "human_ledger"
+            }
+          }
+        ]
+      },
+      "atoms_relations": {
+        "atoms": [
+          {
+            "atom_id": "a1",
+            "text_span": "a person",
+            "type": "object",
+            "required": true,
+            "role": "candidate_anchor",
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a2",
+            "text_span": "enters",
+            "type": "action",
+            "required": true,
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a3",
+            "text_span": "near the gate",
+            "type": "location",
+            "required": true,
+            "role": "filter",
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a4",
+            "text_span": "leaves",
+            "type": "action",
+            "required": true,
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a5",
+            "text_span": "a bag",
+            "type": "object",
+            "required": true,
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a6",
+            "text_span": "carrying",
+            "type": "action",
+            "required": true,
+            "gt_state": "supported"
+          }
+        ],
+        "relations": [
+          {
+            "relation_id": "r1",
+            "subject_atom": "a1",
+            "predicate": "carries",
+            "object_atom": "a5",
+            "required": true,
+            "gt_state": "supported"
+          }
+        ],
+        "temporal_relations": [
+          {
+            "first_atom": "a2",
+            "relation": "before",
+            "second_atom": "a4",
+            "same_actor_required": true,
+            "max_gap_s": 600
+          }
+        ]
+      }
+    },
+    "labels": {
+      "assessability": {
+        "overall": "assessable",
+        "reasons": [
+          "clear"
+        ]
+      },
+      "boundary": {
+        "start_pts": 360.0,
+        "end_pts": 640.0,
+        "tolerance_s": 1.0,
+        "source": "human_ledger"
+      }
+    },
+    "ground_truth_source": "human_ledger",
+    "empty_set_review": {
+      "required": false,
+      "review_complete": false
+    },
+    "synthetic": true,
+    "notes": "Same-actor binding holds only within the visibly-trackable episode; no long-gap identity is claimed."
+  },
+  "expected": {
+    "archive_conclusion": "verified_matches_found",
+    "headline_contains": "VERIFIED MATCH"
+  }
+}

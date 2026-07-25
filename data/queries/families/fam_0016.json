@@ -1,0 +1,106 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0016",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_corr_b",
+  "session_ids": [
+    "sess_corr_b"
+  ],
+  "capability_tags": [
+    "visible_absence",
+    "empty_set"
+  ],
+  "canonical_query": "the loading bay has no vehicle during the clip",
+  "paraphrases": [
+    {
+      "text": "no vehicle is present at the loading bay in the clip",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "the loading bay stays empty of vehicles throughout",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_corr_b_v1"
+    ],
+    "camera_ids": [
+      "cam_corr"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a vehicle",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "visibility_sensitive": true,
+          "gt_state": "contradicted"
+        }
+      ],
+      "logic_groups": [
+        {
+          "group_id": "g1",
+          "operator": "visible_none",
+          "atom_ids": [
+            "a1"
+          ],
+          "observation_scope": "candidate_episode",
+          "gt_outcome": "not_satisfied",
+          "min_count": null,
+          "max_count": null
+        }
+      ]
+    },
+    "track_logic": {
+      "visible_none_gt": [
+        {
+          "group_id": "g1",
+          "target": "vehicle",
+          "observation_interval": {
+            "video_id": "sess_corr_b_v1",
+            "camera_id": "cam_corr",
+            "t0": 0.0,
+            "t1": 420.0
+          },
+          "assessable": true,
+          "expected_observation_ticks": 420,
+          "observed_ticks_complete": true,
+          "expected_outcome": "visible_absence_supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true
+}

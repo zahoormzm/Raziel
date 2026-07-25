@@ -1,0 +1,103 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0041",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_cross",
+  "session_ids": [
+    "sess_cross"
+  ],
+  "capability_tags": [
+    "action",
+    "object"
+  ],
+  "canonical_query": "a person pushes a cart through the gate",
+  "paraphrases": [
+    {
+      "text": "someone wheels a cart through the gate",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a person moves a trolley past the gate",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_cross_v1"
+    ],
+    "camera_ids": [
+      "cam_cross"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_cross_v1",
+          "camera_id": "cam_cross",
+          "t0": 700.0,
+          "t1": 720.0,
+          "boundary": {
+            "start_pts": 700.0,
+            "end_pts": 720.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "a cart",
+          "type": "object",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "pushes through the gate",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 700.0,
+      "end_pts": 720.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true
+}

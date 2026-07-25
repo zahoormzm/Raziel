@@ -1,0 +1,144 @@
+{
+  "golden_case_version": "1.0.0",
+  "case_id": "golden_09_visible_absence",
+  "required_index": 9,
+  "title": "Visible absence (assessable + occluded variants)",
+  "synthetic": true,
+  "family": {
+    "family_schema_version": "1.0.0",
+    "family_id": "gold_fam_09",
+    "pool": "staged",
+    "split": "test",
+    "scenario_id": "scn_golden",
+    "session_ids": [
+      "sess_golden"
+    ],
+    "capability_tags": [
+      "visible_absence",
+      "empty_set"
+    ],
+    "canonical_query": "no bag left in the corridor",
+    "paraphrases": [
+      {
+        "text": "the corridor has no bag left in it",
+        "author_id": "gold_a2",
+        "written_independently": true
+      },
+      {
+        "text": "there is no bag anywhere in the corridor",
+        "author_id": "gold_a1",
+        "written_independently": true
+      }
+    ],
+    "scope": {
+      "video_ids": [
+        "sess_golden_v1"
+      ],
+      "camera_ids": [
+        "cam_gold"
+      ],
+      "start_time": null,
+      "end_time": null,
+      "sampling_policy_version": "sampling-1.0.0"
+    },
+    "ground_truth": {
+      "intervals": {
+        "cardinality": "zero",
+        "intervals": []
+      },
+      "atoms_relations": {
+        "atoms": [
+          {
+            "atom_id": "a1",
+            "text_span": "a bag",
+            "type": "object",
+            "required": true,
+            "role": "candidate_anchor",
+            "visibility_sensitive": true,
+            "gt_state": "contradicted"
+          }
+        ],
+        "logic_groups": [
+          {
+            "group_id": "g_assess",
+            "operator": "visible_none",
+            "atom_ids": [
+              "a1"
+            ],
+            "observation_scope": "candidate_episode",
+            "gt_outcome": "not_satisfied",
+            "min_count": null,
+            "max_count": null
+          }
+        ]
+      },
+      "track_logic": {
+        "visible_none_gt": [
+          {
+            "group_id": "g_assess",
+            "target": "bag",
+            "observation_interval": {
+              "video_id": "sess_golden_v1",
+              "camera_id": "cam_gold",
+              "t0": 0.0,
+              "t1": 120.0
+            },
+            "assessable": true,
+            "expected_observation_ticks": 120,
+            "observed_ticks_complete": true,
+            "expected_outcome": "visible_absence_supported"
+          },
+          {
+            "group_id": "g_occluded",
+            "target": "bag",
+            "observation_interval": {
+              "video_id": "sess_golden_v1",
+              "camera_id": "cam_gold",
+              "t0": 120.0,
+              "t1": 240.0
+            },
+            "assessable": false,
+            "expected_observation_ticks": 120,
+            "observed_ticks_complete": false,
+            "expected_outcome": "unobservable"
+          }
+        ]
+      }
+    },
+    "labels": {
+      "assessability": {
+        "overall": "assessable",
+        "reasons": [
+          "clear"
+        ]
+      }
+    },
+    "ground_truth_source": "human_ledger",
+    "empty_set_review": {
+      "required": true,
+      "reviewed_by": [
+        "annotator_A1",
+        "annotator_A2"
+      ],
+      "review_complete": true
+    },
+    "synthetic": true,
+    "notes": "Two variants recorded together: an assessable stretch where absence is certifiable, and an occluded stretch where it is not."
+  },
+  "expected": {
+    "archive_conclusion": "no_verified_match_at_operating_point",
+    "headline_contains": "NO VERIFIED MATCH",
+    "variants": [
+      {
+        "name": "assessable",
+        "expected_outcome": "visible_absence_supported",
+        "note": "clean negative certifiable"
+      },
+      {
+        "name": "occluded",
+        "expected_outcome": "unobservable",
+        "note": "missing coverage -> cannot certify absence -> INSUFFICIENT VISUAL EVIDENCE"
+      }
+    ]
+  }
+}

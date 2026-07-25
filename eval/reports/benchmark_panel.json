@@ -1,0 +1,185 @@
+{
+  "panel_schema_version": "1.0.0",
+  "product": {
+    "product_name": "RAZIEL",
+    "product_subtitle": "Temporal Evidence Intelligence",
+    "retrieval_name": "Eyes of God"
+  },
+  "config_hash": "525b6b53336d69a8af254499279f778dd1e4e8660e9beed14910703db8eda7f9",
+  "evaluated_date": "2026-07-24",
+  "t_iou_threshold": 0.5,
+  "primary_config": "FULL",
+  "dataset": {
+    "family_count": 42,
+    "minimum_required": 40,
+    "target_range": [
+      60,
+      80
+    ],
+    "by_pool": {
+      "staged": 38,
+      "organizer": 4
+    },
+    "by_split": {
+      "train": 20,
+      "test": 15,
+      "dev": 7
+    },
+    "cardinality_distribution": {
+      "one": 28,
+      "many": 1,
+      "zero": 13
+    },
+    "capability_coverage": {
+      "action": 13,
+      "ambiguous": 2,
+      "attribute": 14,
+      "binding": 6,
+      "bounded_count": 3,
+      "bounded_or": 3,
+      "empty_set": 6,
+      "location": 13,
+      "long_gap_identity_rejection": 2,
+      "multi_occurrence": 1,
+      "object": 15,
+      "temporal_order": 7,
+      "unobservable": 4,
+      "visible_absence": 3
+    },
+    "challenger_distribution": {
+      "bounded_count_correct": 1,
+      "bounded_count_incorrect": 1,
+      "bounded_disjunction": 1,
+      "partial_event": 2,
+      "repeated_events": 1,
+      "short_interruption": 1,
+      "track_fragmentation": 1,
+      "true_no_event": 1,
+      "unobservable": 1,
+      "visible_absence_assessable": 1,
+      "visible_absence_unassessable": 1,
+      "visually_similar_actor": 1,
+      "wrong_attribute": 5,
+      "wrong_binding": 3,
+      "wrong_object": 1,
+      "wrong_order": 4
+    },
+    "scenario_count": 19,
+    "session_count": 19,
+    "manifest_count": 20,
+    "annotation_count": 30,
+    "paraphrases_per_family": 2,
+    "synthetic_family_count": 42,
+    "all_synthetic": true
+  },
+  "headline": {
+    "interval_candidate_recall": "not_yet_measured",
+    "complete_set_positive_query_recall": "not_yet_measured",
+    "empty_set_rejection_f1": "not_yet_measured",
+    "system_undetermined_rate": "not_yet_measured"
+  },
+  "configurations": {
+    "B1": {
+      "config": "B1",
+      "description": "Whole-query SigLIP2 frame retrieval only.",
+      "status": "not_yet_measured",
+      "config_hash": "not_yet_measured",
+      "candidate_recall": "not_yet_measured",
+      "temporal_set": "not_yet_measured",
+      "empty_set_rejection_f1": "not_yet_measured",
+      "required_condition": "not_yet_measured",
+      "boundary_error": "not_yet_measured",
+      "latency_efficiency": "not_yet_measured",
+      "coverage": "not_yet_measured"
+    },
+    "B2": {
+      "config": "B2",
+      "description": "Atom-union retrieval without per-constraint verification.",
+      "status": "not_yet_measured",
+      "config_hash": "not_yet_measured",
+      "candidate_recall": "not_yet_measured",
+      "temporal_set": "not_yet_measured",
+      "empty_set_rejection_f1": "not_yet_measured",
+      "required_condition": "not_yet_measured",
+      "boundary_error": "not_yet_measured",
+      "latency_efficiency": "not_yet_measured",
+      "coverage": "not_yet_measured"
+    },
+    "B3": {
+      "config": "B3",
+      "description": "B2 plus one whole-query VLM yes/no per candidate.",
+      "status": "not_yet_measured",
+      "config_hash": "not_yet_measured",
+      "candidate_recall": "not_yet_measured",
+      "temporal_set": "not_yet_measured",
+      "empty_set_rejection_f1": "not_yet_measured",
+      "required_condition": "not_yet_measured",
+      "boundary_error": "not_yet_measured",
+      "latency_efficiency": "not_yet_measured",
+      "coverage": "not_yet_measured"
+    },
+    "FULL": {
+      "config": "FULL",
+      "description": "Atom union + optional clip lane + temporal assembly + constraint verifier.",
+      "status": "not_yet_measured",
+      "config_hash": "not_yet_measured",
+      "candidate_recall": "not_yet_measured",
+      "temporal_set": "not_yet_measured",
+      "empty_set_rejection_f1": "not_yet_measured",
+      "required_condition": "not_yet_measured",
+      "boundary_error": "not_yet_measured",
+      "latency_efficiency": "not_yet_measured",
+      "coverage": "not_yet_measured"
+    },
+    "FULL+GRAPH": {
+      "config": "FULL+GRAPH",
+      "description": "FULL + tracklet/temporal-graph candidates and bounded-logic execution.",
+      "status": "not_yet_measured",
+      "config_hash": "not_yet_measured",
+      "candidate_recall": "not_yet_measured",
+      "temporal_set": "not_yet_measured",
+      "empty_set_rejection_f1": "not_yet_measured",
+      "required_condition": "not_yet_measured",
+      "boundary_error": "not_yet_measured",
+      "latency_efficiency": "not_yet_measured",
+      "coverage": "not_yet_measured"
+    },
+    "FULL+STR": {
+      "config": "FULL+STR",
+      "description": "FULL with the trained Temporal Evidence Reranker (only if trained).",
+      "status": "not_yet_measured",
+      "config_hash": "not_yet_measured",
+      "candidate_recall": "not_yet_measured",
+      "temporal_set": "not_yet_measured",
+      "empty_set_rejection_f1": "not_yet_measured",
+      "required_condition": "not_yet_measured",
+      "boundary_error": "not_yet_measured",
+      "latency_efficiency": "not_yet_measured",
+      "coverage": "not_yet_measured"
+    }
+  },
+  "data_integrity": {
+    "ok": true,
+    "schema_errors": [],
+    "split_discipline": {
+      "ok": true,
+      "errors": []
+    },
+    "annotation_ordering": {
+      "ok": true,
+      "errors": []
+    },
+    "manifests_immutable": true,
+    "double_annotation_fraction": 0.23809523809523808,
+    "double_annotation_meets_20pct": true,
+    "counts": {
+      "families": 42,
+      "manifests": 20,
+      "annotations": 30
+    }
+  },
+  "disclaimer": "These are aggregate held-out measurements, not query-specific probabilities.",
+  "wording_discipline": {
+    "note": "No-match wording is conditional on the operating point and completeness. The system never claims every source frame was watched, proven absence, identity across discontinuous gaps/cameras, tamper-proofness, legal admissibility, or uncalibrated confidence (§2)."
+  }
+}

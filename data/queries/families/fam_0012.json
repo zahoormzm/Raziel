@@ -1,0 +1,133 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0012",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_court_b",
+  "session_ids": [
+    "sess_court_b"
+  ],
+  "capability_tags": [
+    "bounded_count"
+  ],
+  "canonical_query": "how many people cross the courtyard",
+  "paraphrases": [
+    {
+      "text": "count people crossing the courtyard",
+      "author_id": "auth_2",
+      "written_independently": true
+    },
+    {
+      "text": "number of people walking across the courtyard",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_court_b_v1"
+    ],
+    "camera_ids": [
+      "cam_court"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_court_b_v1",
+          "camera_id": "cam_court",
+          "t0": 30.0,
+          "t1": 200.0,
+          "boundary": {
+            "start_pts": 30.0,
+            "end_pts": 200.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "people crossing",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "unobservable"
+        }
+      ],
+      "logic_groups": [
+        {
+          "group_id": "g1",
+          "operator": "count",
+          "atom_ids": [
+            "a1"
+          ],
+          "observation_scope": "continuous_camera_interval",
+          "gt_outcome": "unresolved",
+          "min_count": 1,
+          "max_count": 5
+        }
+      ]
+    },
+    "track_logic": {
+      "count_gt": [
+        {
+          "group_id": "g1",
+          "continuous_camera_interval": {
+            "video_id": "sess_court_b_v1",
+            "camera_id": "cam_court",
+            "t0": 30.0,
+            "t1": 200.0
+          },
+          "qualifying_tracklets": 3,
+          "declared_bound": 5,
+          "fragmentation_level": "high",
+          "occlusion_level": "partial",
+          "expected_outcome": "unresolved"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "partially_assessable",
+      "reasons": [
+        "occlusion"
+      ]
+    },
+    "boundary": {
+      "start_pts": 30.0,
+      "end_pts": 200.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0012a",
+      "family_id": "fam_0012",
+      "type": "bounded_count_correct",
+      "description": "a clean sub-interval where exactly two people cross",
+      "expected": {
+        "archive_conclusion": "verified_matches_found",
+        "logic_outcome": "satisfied"
+      },
+      "synthetic": true
+    }
+  ],
+  "notes": "Honest abstention: heavy fragmentation forces 'unresolved', never a fabricated count."
+}

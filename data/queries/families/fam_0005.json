@@ -1,0 +1,125 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0005",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_gate_b",
+  "session_ids": [
+    "sess_gate_b"
+  ],
+  "capability_tags": [
+    "object",
+    "attribute",
+    "location"
+  ],
+  "canonical_query": "a black bag by the entrance gate",
+  "paraphrases": [
+    {
+      "text": "a dark bag at the entrance gate",
+      "author_id": "auth_2",
+      "written_independently": true
+    },
+    {
+      "text": "a black holdall next to the gate entrance",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_gate_b_v1"
+    ],
+    "camera_ids": [
+      "cam_gate"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_gate_b_v1",
+          "camera_id": "cam_gate",
+          "t0": 88.0,
+          "t1": 101.0,
+          "boundary": {
+            "start_pts": 88.0,
+            "end_pts": 101.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "black bag",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "black",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "entrance gate",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 88.0,
+      "end_pts": 101.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0005a",
+      "family_id": "fam_0005",
+      "type": "wrong_attribute",
+      "description": "a blue bag by the entrance gate",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "atom_states": [
+          {
+            "atom_id": "a2",
+            "state": "contradicted"
+          }
+        ]
+      },
+      "synthetic": true
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "annotation_id": "ann_fam_0029_A1",
+  "target_type": "query_family",
+  "target_id": "fam_0029",
+  "annotator_id": "annotator_A1",
+  "pass_type": "independent",
+  "blind": true,
+  "recorded_at": "2026-07-20T10:00:00",
+  "labels": {
+    "present_absent": "present",
+    "atom_states": [
+      {
+        "atom_id": "a1",
+        "state": "supported"
+      },
+      {
+        "atom_id": "a2",
+        "state": "supported"
+      },
+      {
+        "atom_id": "a3",
+        "state": "supported"
+      },
+      {
+        "atom_id": "a4",
+        "state": "supported"
+      }
+    ],
+    "temporal_boundaries": [
+      {
+        "t0": 90.0,
+        "t1": 104.0
+      }
+    ]
+  },
+  "synthetic": true
+}

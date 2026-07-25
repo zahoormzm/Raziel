@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Local-first temporal evidence search interface"
+    />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="/assets/app.js" defer></script>
+    <title>Temporal evidence interface</title>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <p class="eyebrow" id="product-subtitle">Loading product configuration…</p>
+          <h1 id="product-name" aria-live="polite">—</h1>
+        </div>
+        <div class="system-state" aria-label="System status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>LOCAL / OFFLINE READY</span>
+          <span class="divider" aria-hidden="true"></span>
+          <span>RTX 5070 WORKER <strong id="worker-state">UNCHECKED</strong></span>
+        </div>
+      </header>
+
+      <section class="scope-strip" aria-label="Archive scope">
+        <div>
+          <span class="label">ARCHIVE</span>
+          <strong id="archive-duration">Not ingested</strong>
+        </div>
+        <div>
+          <span class="label">OPERATING POINT</span>
+          <strong id="operating-point">Not yet measured</strong>
+        </div>
+        <div>
+          <span class="label">INDEX HEALTH</span>
+          <strong id="index-health">No coverage report</strong>
+        </div>
+        <div>
+          <span class="label">RETRIEVAL</span>
+          <strong id="retrieval-name">—</strong>
+        </div>
+      </section>
+
+      <section class="search-panel" aria-labelledby="search-heading">
+        <div class="section-heading">
+          <span class="step">01</span>
+          <div>
+            <h2 id="search-heading">Declare the event and scope</h2>
+            <p>Searches are conditional on the selected cameras, time interval, and sampling policy.</p>
+          </div>
+        </div>
+        <form id="search-form">
+          <label class="query-label" for="query">NATURAL-LANGUAGE DESCRIPTION</label>
+          <div class="query-row">
+            <textarea
+              id="query"
+              name="query"
+              rows="2"
+              required
+              placeholder="A person in red places a black bag near the gate and walks away."
+            ></textarea>
+            <button type="submit">
+              <span>Search archive</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+          <div class="filter-row">
+            <label>
+              <span>CAMERA</span>
+              <select id="camera" name="camera">
+                <option value="">All declared cameras</option>
+              </select>
+            </label>
+            <label>
+              <span>START PTS (S)</span>
+              <input id="start-time" name="start-time" type="number" min="0" step="0.001" placeholder="0" />
+            </label>
+            <label>
+              <span>END PTS (S)</span>
+              <input id="end-time" name="end-time" type="number" min="0" step="0.001" placeholder="archive end" />
+            </label>
+            <p class="scope-statement" id="scope-statement">
+              No archive scope has been declared yet.
+            </p>
+          </div>
+        </form>
+      </section>
+
+      <section class="workspace">
+        <aside class="intent-panel" aria-labelledby="intent-heading">
+          <div class="section-heading compact">
+            <span class="step">02</span>
+            <h2 id="intent-heading">Parsed intent</h2>
+          </div>
+          <div id="intent-empty" class="empty-state">
+            Constraints appear here before expensive verification begins.
+          </div>
+          <div id="intent-chips" class="chips" aria-live="polite"></div>
+          <div class="contract-note">
+            <span class="contract-mark">i</span>
+            <p>
+              Every required constraint resolves to <strong>supported</strong>,
+              <strong>contradicted</strong>, <strong>unobservable</strong>, or
+              <strong>undetermined</strong>.
+            </p>
+          </div>
+        </aside>
+
+        <section class="evidence-panel" aria-labelledby="evidence-heading">
+          <div class="section-heading compact">
+            <span class="step">03</span>
+            <div>
+              <h2 id="evidence-heading">Evidence timeline</h2>
+              <p id="headline">Awaiting a scoped query.</p>
+            </div>
+          </div>
+
+          <div class="progress-grid" aria-label="Search progress">
+            <div><span>SCOPE</span><strong id="progress-scope">—</strong></div>
+            <div><span>INDEXED TICKS SCORED</span><strong id="progress-scored">—</strong></div>
+            <div><span>WINDOWS</span><strong id="progress-windows">—</strong></div>
+            <div><span>EPISODES</span><strong id="progress-episodes">—</strong></div>
+            <div><span>VERIFIED</span><strong id="progress-verified">—</strong></div>
+          </div>
+
+          <div class="timeline" id="timeline">
+            <div class="ruler" aria-hidden="true">
+              <span>00:00</span><span>15:00</span><span>30:00</span><span>45:00</span><span>60:00</span>
+            </div>
+            <div class="camera-lane">
+              <span class="camera-name">NO CAMERA</span>
+              <div class="track">
+                <span class="coverage-gap" title="No indexed coverage"></span>
+              </div>
+            </div>
+          </div>
+
+          <div id="result-list" class="result-list">
+            <article class="result-empty">
+              <span class="bracket" aria-hidden="true">[</span>
+              <p>
+                Verified matches, unresolved candidates, and rejected near-misses
+                will remain distinct here.
+              </p>
+              <span class="bracket" aria-hidden="true">]</span>
+            </article>
+          </div>
+
+          <section id="evidence-inspector" class="evidence-inspector" hidden>
+            <div class="player-frame">
+              <video id="evidence-player" controls preload="metadata">
+                Your browser cannot play this evidence clip.
+              </video>
+              <p id="player-placeholder">
+                Playback becomes available when the selected result exposes a local
+                preview URL.
+              </p>
+            </div>
+            <aside class="evidence-drawer">
+              <div>
+                <span class="label">SELECTED EVIDENCE</span>
+                <h3 id="evidence-title">—</h3>
+                <p id="evidence-interval">—</p>
+              </div>
+              <div id="constraint-list" class="constraint-list"></div>
+              <div id="trace-list" class="trace-list"></div>
+              <div class="drawer-actions">
+                <button id="preview-export" type="button">Preview export</button>
+                <button id="evidence-export" type="button">Evidence export</button>
+              </div>
+            </aside>
+          </section>
+        </section>
+      </section>
+
+      <footer>
+        <p>
+          No-match conclusions are conditional on indexing, assembly, and verification
+          coverage at the current operating point.
+        </p>
+        <a href="/benchmark/current">Held-out benchmark context</a>
+      </footer>
+    </main>
+  </body>
+</html>

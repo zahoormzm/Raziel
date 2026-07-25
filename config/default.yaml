@@ -1,0 +1,25 @@
+schema_version: "1.0.0"
+brand_config: "config/brand.yaml"
+runtime:
+  local_first: true
+  metadata_store: "sqlite"
+  base_sampling_fps: 1.0
+  motion_sampling_fps_max: 4.0
+  refinement_sampling_fps_min: 2.0
+  refinement_sampling_fps_max: 4.0
+  window_scales_seconds: [4, 12, 30]
+  window_strides_seconds: [2, 6, 15]
+features:
+  clip_lane: false
+  tracklet_lane: false
+  evidence_graph: true
+  bounded_logic: false
+  temporal_reranker: false
+  grounding: false
+  mac_verifier: false
+  ocr: false
+  asr: false
+public_contract:
+  no_match_phrase: "No verified match was found."
+  operating_point_phrase: "At the current operating point."
+  extraction_phrase: "The manifest is a traceable extraction record."

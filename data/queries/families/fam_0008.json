@@ -1,0 +1,124 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0008",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_entrance",
+  "session_ids": [
+    "sess_entrance"
+  ],
+  "capability_tags": [
+    "object",
+    "attribute",
+    "location"
+  ],
+  "canonical_query": "a red vehicle near the entrance",
+  "paraphrases": [
+    {
+      "text": "a red car by the entrance",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a red van close to the entrance",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_entrance_v1"
+    ],
+    "camera_ids": [
+      "cam_ent"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_entrance_v1",
+          "camera_id": "cam_ent",
+          "t0": 30.0,
+          "t1": 48.0,
+          "boundary": {
+            "start_pts": 30.0,
+            "end_pts": 48.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "vehicle",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "red",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "the entrance",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 30.0,
+      "end_pts": 48.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0008a",
+      "family_id": "fam_0008",
+      "type": "wrong_attribute",
+      "description": "a white van near the entrance",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "atom_states": [
+          {
+            "atom_id": "a2",
+            "state": "contradicted"
+          }
+        ]
+      },
+      "synthetic": true
+    }
+  ]
+}

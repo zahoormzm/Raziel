@@ -1,0 +1,110 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0019",
+  "pool": "staged",
+  "split": "dev",
+  "scenario_id": "scn_dark",
+  "session_ids": [
+    "sess_dark"
+  ],
+  "capability_tags": [
+    "unobservable"
+  ],
+  "canonical_query": "a person in a dark jacket in the alley",
+  "paraphrases": [
+    {
+      "text": "someone wearing a dark coat in the alley",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a person in a black jacket down the alley",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_dark_v1"
+    ],
+    "camera_ids": [
+      "cam_dark"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "dark jacket colour",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "unobservable",
+          "gt_reason": "low_light"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "the alley",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "partially_assessable",
+      "reasons": [
+        "low_light",
+        "dark"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0019a",
+      "family_id": "fam_0019",
+      "type": "unobservable",
+      "description": "darkness prevents judging the colour constraint",
+      "expected": {
+        "archive_conclusion": "insufficient_visual_evidence",
+        "atom_states": [
+          {
+            "atom_id": "a2",
+            "state": "unobservable"
+          }
+        ]
+      },
+      "synthetic": true
+    }
+  ],
+  "notes": "Honest uncertainty: a person is present but jacket colour is unassessable in the dark, so the required attribute is unobservable -> INSUFFICIENT VISUAL EVIDENCE, not a verified match and not a clean no-match."
+}

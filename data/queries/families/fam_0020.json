@@ -1,0 +1,92 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0020",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_dark_b",
+  "session_ids": [
+    "sess_dark_b"
+  ],
+  "capability_tags": [
+    "unobservable"
+  ],
+  "canonical_query": "a green bag in the alley at night",
+  "paraphrases": [
+    {
+      "text": "a green-coloured bag in the dark alley",
+      "author_id": "auth_2",
+      "written_independently": true
+    },
+    {
+      "text": "a bag that looks green down the night-time alley",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_dark_b_v1"
+    ],
+    "camera_ids": [
+      "cam_dark"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a bag",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "green colour",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "unobservable",
+          "gt_reason": "low_light"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "the alley",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "partially_assessable",
+      "reasons": [
+        "low_light",
+        "dark"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true,
+  "notes": "Colour unassessable at night -> INSUFFICIENT VISUAL EVIDENCE."
+}

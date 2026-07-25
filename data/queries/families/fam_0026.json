@@ -1,0 +1,129 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0026",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_cross",
+  "session_ids": [
+    "sess_cross"
+  ],
+  "capability_tags": [
+    "temporal_order",
+    "action"
+  ],
+  "canonical_query": "someone drops a bag then walks away",
+  "paraphrases": [
+    {
+      "text": "a person puts a bag down and then leaves",
+      "author_id": "auth_2",
+      "written_independently": true
+    },
+    {
+      "text": "somebody sets a bag on the floor and walks off",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_cross_v1"
+    ],
+    "camera_ids": [
+      "cam_cross"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_cross_v1",
+          "camera_id": "cam_cross",
+          "t0": 520.0,
+          "t1": 545.0,
+          "boundary": {
+            "start_pts": 520.0,
+            "end_pts": 545.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "someone",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "a bag",
+          "type": "object",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "drops",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a4",
+          "text_span": "walks away",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "relations": [
+        {
+          "relation_id": "r1",
+          "subject_atom": "a1",
+          "predicate": "places",
+          "object_atom": "a2",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "temporal_relations": [
+        {
+          "first_atom": "a3",
+          "relation": "before",
+          "second_atom": "a4",
+          "same_actor_required": true,
+          "max_gap_s": 60
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 520.0,
+      "end_pts": 545.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true
+}

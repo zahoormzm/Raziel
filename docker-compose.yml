@@ -1,0 +1,32 @@
+services:
+  orchestrator:
+    build:
+      context: .
+      dockerfile: docker/core.Dockerfile
+    command: ["uvicorn", "api.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      RAZIEL_GPU_WORKER_URL: "http://gpu-worker:8010"
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./artifacts:/app/artifacts"
+  gpu-worker:
+    profiles: ["gpu"]
+    build:
+      context: .
+      dockerfile: docker/verifier.Dockerfile
+    ports:
+      - "8010:8010"
+    volumes:
+      - "./models:/app/models:ro"
+    environment:
+      RAZIEL_VERIFIER_MODEL: "/app/models/qwen3-vl-4b-instruct"
+      RAZIEL_VERIFIER_REVISION: "ebb281ec70b05090aa6165b016eac8ec08e71b17"
+      RAZIEL_OPERATING_POINT_HASH: "${RAZIEL_OPERATING_POINT_HASH:?Set the frozen operating-point SHA-256}"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: ["gpu"]

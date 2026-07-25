@@ -1,0 +1,128 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0013",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_court_b",
+  "session_ids": [
+    "sess_court_b"
+  ],
+  "capability_tags": [
+    "bounded_count",
+    "location"
+  ],
+  "canonical_query": "two people waiting by the bench",
+  "paraphrases": [
+    {
+      "text": "a pair of people standing at the bench",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "two individuals waiting near the bench",
+      "author_id": "auth_2",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_court_b_v1"
+    ],
+    "camera_ids": [
+      "cam_court"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_court_b_v1",
+          "camera_id": "cam_court",
+          "t0": 250.0,
+          "t1": 320.0,
+          "boundary": {
+            "start_pts": 250.0,
+            "end_pts": 320.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "people waiting",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "the bench",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ],
+      "logic_groups": [
+        {
+          "group_id": "g1",
+          "operator": "count",
+          "atom_ids": [
+            "a1"
+          ],
+          "observation_scope": "continuous_camera_interval",
+          "gt_outcome": "satisfied",
+          "min_count": 2,
+          "max_count": 2
+        }
+      ]
+    },
+    "track_logic": {
+      "count_gt": [
+        {
+          "group_id": "g1",
+          "continuous_camera_interval": {
+            "video_id": "sess_court_b_v1",
+            "camera_id": "cam_court",
+            "t0": 250.0,
+            "t1": 320.0
+          },
+          "qualifying_tracklets": 2,
+          "declared_bound": 5,
+          "fragmentation_level": "none",
+          "occlusion_level": "none",
+          "expected_outcome": 2
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 250.0,
+      "end_pts": 320.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true
+}

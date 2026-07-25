@@ -1,0 +1,6 @@
+Held-out benchmark, config 525b6b53336d69a8af254499279f778dd1e4e8660e9beed14910703db8eda7f9, evaluated 2026-07-24
+Interval candidate recall: not yet measured
+Complete-set positive-query recall: not yet measured
+Empty-set rejection F1: not yet measured
+System undetermined rate: not yet measured
+These are aggregate held-out measurements, not query-specific probabilities.

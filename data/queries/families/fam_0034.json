@@ -1,0 +1,94 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0034",
+  "pool": "staged",
+  "split": "dev",
+  "scenario_id": "scn_longgap",
+  "session_ids": [
+    "sess_longgap"
+  ],
+  "capability_tags": [
+    "long_gap_identity_rejection"
+  ],
+  "canonical_query": "a person seen earlier appears again much later",
+  "paraphrases": [
+    {
+      "text": "someone from earlier shows up again a long time afterwards",
+      "author_id": "auth_2",
+      "written_independently": true
+    },
+    {
+      "text": "the same person reappears after a long gap",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_longgap_v1"
+    ],
+    "camera_ids": [
+      "cam_long"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "zero",
+      "intervals": []
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "seen earlier",
+          "type": "temporal",
+          "required": true
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "appears again later",
+          "type": "temporal",
+          "required": true
+        }
+      ],
+      "temporal_relations": [
+        {
+          "first_atom": "a2",
+          "relation": "before",
+          "second_atom": "a3",
+          "same_actor_required": true,
+          "max_gap_s": 900
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": true,
+    "reviewed_by": [
+      "annotator_A1",
+      "annotator_A2"
+    ],
+    "review_complete": true
+  },
+  "synthetic": true,
+  "notes": "Cross-time identity across a long gap is unsupported -> clarification / order-only."
+}

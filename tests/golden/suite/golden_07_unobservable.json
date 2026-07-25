@@ -1,0 +1,103 @@
+{
+  "golden_case_version": "1.0.0",
+  "case_id": "golden_07_unobservable",
+  "required_index": 7,
+  "title": "Unobservable",
+  "synthetic": true,
+  "family": {
+    "family_schema_version": "1.0.0",
+    "family_id": "gold_fam_07",
+    "pool": "staged",
+    "split": "test",
+    "scenario_id": "scn_golden",
+    "session_ids": [
+      "sess_golden"
+    ],
+    "capability_tags": [
+      "unobservable"
+    ],
+    "canonical_query": "the colour of the bag in the dark corner",
+    "paraphrases": [
+      {
+        "text": "what colour is the bag in the dark corner",
+        "author_id": "gold_a1",
+        "written_independently": true
+      },
+      {
+        "text": "identify the bag colour in the shadowed corner",
+        "author_id": "gold_a2",
+        "written_independently": true
+      }
+    ],
+    "scope": {
+      "video_ids": [
+        "sess_golden_v1"
+      ],
+      "camera_ids": [
+        "cam_gold"
+      ],
+      "start_time": null,
+      "end_time": null,
+      "sampling_policy_version": "sampling-1.0.0"
+    },
+    "ground_truth": {
+      "intervals": {
+        "cardinality": "zero",
+        "intervals": []
+      },
+      "atoms_relations": {
+        "atoms": [
+          {
+            "atom_id": "a1",
+            "text_span": "the bag",
+            "type": "object",
+            "required": true,
+            "role": "candidate_anchor",
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a2",
+            "text_span": "bag colour",
+            "type": "attribute",
+            "required": true,
+            "visibility_sensitive": true,
+            "gt_state": "unobservable",
+            "gt_reason": "low_light"
+          },
+          {
+            "atom_id": "a3",
+            "text_span": "the dark corner",
+            "type": "location",
+            "required": true,
+            "role": "filter",
+            "gt_state": "supported"
+          }
+        ]
+      }
+    },
+    "labels": {
+      "assessability": {
+        "overall": "partially_assessable",
+        "reasons": [
+          "low_light",
+          "dark"
+        ]
+      }
+    },
+    "ground_truth_source": "human_ledger",
+    "empty_set_review": {
+      "required": true,
+      "reviewed_by": [
+        "annotator_A1",
+        "annotator_A2"
+      ],
+      "review_complete": true
+    },
+    "synthetic": true,
+    "notes": "A bag is present but its colour is unassessable in the dark -> the required attribute is unobservable."
+  },
+  "expected": {
+    "archive_conclusion": "insufficient_visual_evidence",
+    "headline_contains": "INSUFFICIENT VISUAL EVIDENCE"
+  }
+}

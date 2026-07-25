@@ -1,0 +1,124 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0007",
+  "pool": "staged",
+  "split": "test",
+  "scenario_id": "scn_gate_b",
+  "session_ids": [
+    "sess_gate_b"
+  ],
+  "capability_tags": [
+    "object",
+    "attribute",
+    "location"
+  ],
+  "canonical_query": "a red jacket near the gate",
+  "paraphrases": [
+    {
+      "text": "someone in a red jacket by the gate",
+      "author_id": "auth_3",
+      "written_independently": true
+    },
+    {
+      "text": "a person wearing a red coat close to the gate",
+      "author_id": "auth_1",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_gate_b_v1"
+    ],
+    "camera_ids": [
+      "cam_gate"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_gate_b_v1",
+          "camera_id": "cam_gate",
+          "t0": 330.0,
+          "t1": 345.0,
+          "boundary": {
+            "start_pts": 330.0,
+            "end_pts": 345.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "a person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "red jacket",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "the gate",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 330.0,
+      "end_pts": 345.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0007a",
+      "family_id": "fam_0007",
+      "type": "wrong_attribute",
+      "description": "a green jacket near the gate",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "atom_states": [
+          {
+            "atom_id": "a2",
+            "state": "contradicted"
+          }
+        ]
+      },
+      "synthetic": true
+    }
+  ]
+}

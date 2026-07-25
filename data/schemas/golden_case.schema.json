@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/golden_case.schema.json@1.0.0",
+  "title": "Golden end-to-end suite case (§29)",
+  "description": "One of the ten required golden queries. Wraps a full query family (validated against query_family.schema.json) with the expected end-to-end behaviour: the deterministic headline (§4.2), the archive conclusion (§4), and per-variant expectations (e.g. visible-absence assessable vs occluded, bounded-count fragmentation decoy). Fixtures are synthetic and labeled as such; expected behaviour is asserted structurally, never by invented model scores. Run cache-bypassed before every release candidate (§29).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["golden_case_version", "case_id", "required_index", "title", "family", "expected", "synthetic"],
+  "properties": {
+    "golden_case_version": { "const": "1.0.0" },
+    "case_id": { "type": "string", "minLength": 1 },
+    "required_index": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Position in the §29 required list: 1 object, 2 attribute, 3 action, 4 binding, 5 cross-window order, 6 absent/no-match, 7 unobservable, 8 bounded disjunction, 9 visible absence (assessable+occluded), 10 bounded count with fragmentation decoy."
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "family": { "$ref": "query_family.schema.json" },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["archive_conclusion", "headline_contains"],
+      "properties": {
+        "archive_conclusion": {
+          "enum": [
+            "verified_matches_found",
+            "no_verified_match_at_operating_point",
+            "insufficient_visual_evidence",
+            "search_incomplete",
+            "not_applicable"
+          ]
+        },
+        "headline_contains": {
+          "type": "string",
+          "description": "A substring that MUST appear in the deterministic headline (§4.2), e.g. 'VERIFIED MATCHES FOUND', 'NO VERIFIED MATCH', 'INSUFFICIENT VISUAL EVIDENCE'."
+        },
+        "variants": {
+          "type": "array",
+          "description": "Per-variant expectations (assessable vs occluded absence; correct-count vs fragmentation decoy).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "expected_outcome"],
+            "properties": {
+              "name": { "type": "string" },
+              "expected_outcome": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "clarification_expected": {
+          "type": "boolean",
+          "description": "True when the correct behaviour is to ask one focused clarification (e.g. long-gap identity, open-world negation)."
+        }
+      }
+    },
+    "synthetic": { "type": "boolean" }
+  }
+}

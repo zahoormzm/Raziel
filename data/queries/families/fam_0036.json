@@ -1,0 +1,104 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0036",
+  "pool": "organizer",
+  "split": "train",
+  "scenario_id": "scn_org_a",
+  "session_ids": [
+    "sess_org_a"
+  ],
+  "capability_tags": [
+    "action",
+    "object"
+  ],
+  "canonical_query": "someone opens the side door",
+  "paraphrases": [
+    {
+      "text": "a person opens the side entrance",
+      "author_id": "auth_3",
+      "written_independently": true
+    },
+    {
+      "text": "somebody opens the side doorway",
+      "author_id": "auth_1",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_org_a_v1"
+    ],
+    "camera_ids": [
+      "cam_orgA"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_org_a_v1",
+          "camera_id": "cam_orgA",
+          "t0": 300.0,
+          "t1": 312.0,
+          "boundary": {
+            "start_pts": 300.0,
+            "end_pts": 312.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "someone",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "the side door",
+          "type": "object",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "opens",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 300.0,
+      "end_pts": 312.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "notes": "Organizer pool, authorization PENDING."
+}

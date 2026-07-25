@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "raziel:data/schemas/annotation_record.schema.json@1.0.0",
+  "title": "Annotation record (blind double annotation + adjudication)",
+  "description": "One annotation pass over a target (a query family or a ledger entry). Supports blind double annotation of at least 20% of the dataset. Adjudication passes may only be created AFTER both independent labels are recorded, and must reference exactly two independent passes (§21.6). eval/schema.py enforces: adjudication.recorded_at > both referenced independent recorded_at; independent passes for a double-annotated target are blind. See RAZIEL_Master_Execution_Plan_v1.3.md §21.6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["annotation_id", "target_type", "target_id", "annotator_id", "pass_type", "blind", "recorded_at", "labels"],
+  "properties": {
+    "annotation_id": { "type": "string", "minLength": 1 },
+    "target_type": { "enum": ["query_family", "ledger_entry"] },
+    "target_id": { "type": "string", "minLength": 1 },
+    "annotator_id": { "type": "string", "minLength": 1 },
+    "pass_type": {
+      "enum": ["independent", "adjudication"],
+      "description": "`independent` passes are recorded blind (annotator cannot see the other pass). `adjudication` reconciles two independent passes and is created only after both exist."
+    },
+    "blind": {
+      "type": "boolean",
+      "description": "True if the annotator could not see any other pass for this target. Independent passes in the double-annotation subset MUST be blind."
+    },
+    "adjudicates": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "For pass_type=adjudication: exactly two independent annotation_ids being reconciled. Empty/absent for independent passes."
+    },
+    "recorded_at": { "type": "string", "description": "ISO-8601 timestamp the pass was recorded." },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["present_absent"],
+      "description": "The four agreement-bearing label groups measured for inter-annotator agreement (§21.6).",
+      "properties": {
+        "present_absent": {
+          "enum": ["present", "absent"],
+          "description": "Whether the queried event is present. Absent labels over a declared scope require full human review."
+        },
+        "atom_states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["atom_id", "state"],
+            "properties": {
+              "atom_id": { "type": "string" },
+              "state": { "enum": ["supported", "contradicted", "unobservable"] }
+            }
+          }
+        },
+        "relation_states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["relation_id", "state"],
+            "properties": {
+              "relation_id": { "type": "string" },
+              "state": { "enum": ["supported", "contradicted", "unobservable"] }
+            }
+          }
+        },
+        "temporal_boundaries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["t0", "t1"],
+            "properties": {
+              "interval_id": { "type": "string" },
+              "t0": { "type": "number", "minimum": 0 },
+              "t1": { "type": "number", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "synthetic": { "type": "boolean" }
+  }
+}

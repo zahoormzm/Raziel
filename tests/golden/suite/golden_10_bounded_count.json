@@ -1,0 +1,165 @@
+{
+  "golden_case_version": "1.0.0",
+  "case_id": "golden_10_bounded_count",
+  "required_index": 10,
+  "title": "Bounded count with fragmentation decoy",
+  "synthetic": true,
+  "family": {
+    "family_schema_version": "1.0.0",
+    "family_id": "gold_fam_10",
+    "pool": "staged",
+    "split": "test",
+    "scenario_id": "scn_golden",
+    "session_ids": [
+      "sess_golden"
+    ],
+    "capability_tags": [
+      "bounded_count",
+      "location"
+    ],
+    "canonical_query": "how many people are waiting by the bench",
+    "paraphrases": [
+      {
+        "text": "count the people waiting at the bench",
+        "author_id": "gold_a1",
+        "written_independently": true
+      },
+      {
+        "text": "number of people standing by the bench",
+        "author_id": "gold_a2",
+        "written_independently": true
+      }
+    ],
+    "scope": {
+      "video_ids": [
+        "sess_golden_v1"
+      ],
+      "camera_ids": [
+        "cam_gold"
+      ],
+      "start_time": null,
+      "end_time": null,
+      "sampling_policy_version": "sampling-1.0.0"
+    },
+    "ground_truth": {
+      "intervals": {
+        "cardinality": "one",
+        "intervals": [
+          {
+            "video_id": "sess_golden_v1",
+            "camera_id": "cam_gold",
+            "t0": 780.0,
+            "t1": 860.0,
+            "boundary": {
+              "start_pts": 780.0,
+              "end_pts": 860.0,
+              "tolerance_s": 1.0,
+              "source": "human_ledger"
+            }
+          }
+        ]
+      },
+      "atoms_relations": {
+        "atoms": [
+          {
+            "atom_id": "a1",
+            "text_span": "people waiting",
+            "type": "object",
+            "required": true,
+            "role": "candidate_anchor",
+            "gt_state": "supported"
+          },
+          {
+            "atom_id": "a2",
+            "text_span": "the bench",
+            "type": "location",
+            "required": true,
+            "role": "filter",
+            "gt_state": "supported"
+          }
+        ],
+        "logic_groups": [
+          {
+            "group_id": "g_clean",
+            "operator": "count",
+            "atom_ids": [
+              "a1"
+            ],
+            "observation_scope": "continuous_camera_interval",
+            "gt_outcome": "satisfied",
+            "min_count": 1,
+            "max_count": 5
+          }
+        ]
+      },
+      "track_logic": {
+        "count_gt": [
+          {
+            "group_id": "g_clean",
+            "continuous_camera_interval": {
+              "video_id": "sess_golden_v1",
+              "camera_id": "cam_gold",
+              "t0": 780.0,
+              "t1": 860.0
+            },
+            "qualifying_tracklets": 2,
+            "declared_bound": 5,
+            "fragmentation_level": "none",
+            "occlusion_level": "none",
+            "expected_outcome": 2
+          },
+          {
+            "group_id": "g_decoy",
+            "continuous_camera_interval": {
+              "video_id": "sess_golden_v1",
+              "camera_id": "cam_gold",
+              "t0": 860.0,
+              "t1": 900.0
+            },
+            "qualifying_tracklets": 2,
+            "declared_bound": 5,
+            "fragmentation_level": "high",
+            "occlusion_level": "heavy",
+            "expected_outcome": "unresolved"
+          }
+        ]
+      }
+    },
+    "labels": {
+      "assessability": {
+        "overall": "assessable",
+        "reasons": [
+          "clear"
+        ]
+      },
+      "boundary": {
+        "start_pts": 780.0,
+        "end_pts": 860.0,
+        "tolerance_s": 1.0,
+        "source": "human_ledger"
+      }
+    },
+    "ground_truth_source": "human_ledger",
+    "empty_set_review": {
+      "required": false,
+      "review_complete": false
+    },
+    "synthetic": true,
+    "notes": "Clean interval yields an exact count of 2; the fragmentation/occlusion decoy MUST return 'unresolved', never an inflated count."
+  },
+  "expected": {
+    "archive_conclusion": "verified_matches_found",
+    "headline_contains": "VERIFIED MATCH",
+    "variants": [
+      {
+        "name": "clean_interval",
+        "expected_outcome": "2"
+      },
+      {
+        "name": "fragmentation_decoy",
+        "expected_outcome": "unresolved",
+        "note": "track fragmentation + heavy occlusion -> unresolved"
+      }
+    ]
+  }
+}

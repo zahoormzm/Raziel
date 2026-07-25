@@ -1,0 +1,198 @@
+{
+  "family_schema_version": "1.0.0",
+  "family_id": "fam_0002",
+  "pool": "staged",
+  "split": "train",
+  "scenario_id": "scn_gate_a",
+  "session_ids": [
+    "sess_gate_a"
+  ],
+  "capability_tags": [
+    "object",
+    "attribute",
+    "binding",
+    "action",
+    "temporal_order",
+    "location"
+  ],
+  "canonical_query": "a person in red places a black bag near the gate and walks away",
+  "paraphrases": [
+    {
+      "text": "someone wearing red sets down a dark bag by the gate then leaves",
+      "author_id": "auth_1",
+      "written_independently": true
+    },
+    {
+      "text": "a red-clothed person drops a black bag at the gate and departs",
+      "author_id": "auth_3",
+      "written_independently": true
+    }
+  ],
+  "scope": {
+    "video_ids": [
+      "sess_gate_a_v1"
+    ],
+    "camera_ids": [
+      "cam_gate"
+    ],
+    "start_time": null,
+    "end_time": null,
+    "sampling_policy_version": "sampling-1.0.0"
+  },
+  "ground_truth": {
+    "intervals": {
+      "cardinality": "one",
+      "intervals": [
+        {
+          "video_id": "sess_gate_a_v1",
+          "camera_id": "cam_gate",
+          "t0": 120.0,
+          "t1": 138.0,
+          "boundary": {
+            "start_pts": 120.0,
+            "end_pts": 138.0,
+            "tolerance_s": 1.0,
+            "source": "human_ledger"
+          }
+        }
+      ]
+    },
+    "atoms_relations": {
+      "atoms": [
+        {
+          "atom_id": "a1",
+          "text_span": "person",
+          "type": "object",
+          "required": true,
+          "role": "candidate_anchor",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a2",
+          "text_span": "red",
+          "type": "attribute",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a3",
+          "text_span": "black bag",
+          "type": "object",
+          "required": true,
+          "visibility_sensitive": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a4",
+          "text_span": "near the gate",
+          "type": "location",
+          "required": true,
+          "role": "filter",
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a5",
+          "text_span": "places",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "atom_id": "a6",
+          "text_span": "walks away",
+          "type": "action",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "relations": [
+        {
+          "relation_id": "r1",
+          "subject_atom": "a1",
+          "predicate": "places",
+          "object_atom": "a3",
+          "required": true,
+          "gt_state": "supported"
+        },
+        {
+          "relation_id": "r2",
+          "subject_atom": "a3",
+          "predicate": "near",
+          "object_atom": "a4",
+          "required": true,
+          "gt_state": "supported"
+        }
+      ],
+      "temporal_relations": [
+        {
+          "first_atom": "a5",
+          "relation": "before",
+          "second_atom": "a6",
+          "same_actor_required": true,
+          "max_gap_s": 30
+        }
+      ]
+    }
+  },
+  "labels": {
+    "assessability": {
+      "overall": "assessable",
+      "reasons": [
+        "clear"
+      ]
+    },
+    "boundary": {
+      "start_pts": 120.0,
+      "end_pts": 138.0,
+      "tolerance_s": 1.0,
+      "source": "human_ledger"
+    }
+  },
+  "ground_truth_source": "human_ledger",
+  "empty_set_review": {
+    "required": false,
+    "review_complete": false
+  },
+  "synthetic": true,
+  "challengers": [
+    {
+      "challenger_id": "ch_0002a",
+      "family_id": "fam_0002",
+      "type": "wrong_binding",
+      "description": "a different person (not in red) places the bag while the red person only stands by",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "rejected_reason": "places(person_in_red, bag) contradicted"
+      },
+      "synthetic": true
+    },
+    {
+      "challenger_id": "ch_0002b",
+      "family_id": "fam_0002",
+      "type": "wrong_order",
+      "description": "the person walks away first and only later places a bag",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "rejected_reason": "temporal order places-before-walk-away contradicted"
+      },
+      "synthetic": true
+    },
+    {
+      "challenger_id": "ch_0002c",
+      "family_id": "fam_0002",
+      "type": "partial_event",
+      "description": "the person places the bag but never walks away (stays in frame)",
+      "expected": {
+        "archive_conclusion": "no_verified_match_at_operating_point",
+        "atom_states": [
+          {
+            "atom_id": "a6",
+            "state": "contradicted"
+          }
+        ]
+      },
+      "synthetic": true
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+schema_version: "1.0.0"
+profile: "rtx5070"
+gpu:
+  model: "NVIDIA GeForce RTX 5070"
+  vram_mib_reported: 12227
+  residency_policy: "one_large_model"
+roles:
+  - indexing
+  - offline_detection_tracklets
+  - reranker_training
+  - quantized_4b_verifier
+  - candidate_only_grounding
+lease_modes: ["index", "train", "serve"]
+measured:
+  driver: "610.74"
+  cuda_umd: "13.3"
+  ffmpeg_version: "N-125748-g80eb9e99b9-20260723"
+  ffmpeg_build_archive_sha256: "9e3f3eab66b161d32db1aec08fe2d6401594d2b0cd0177128add222c98ca34d9"
+  observed_at: "2026-07-24T16:16:04+05:30"
+benchmarks:
+  b1:
+    status: "measured_passed"
+    fixture: "synthetic_throughput_only"
+    semantic_measurement: false
+    footage_duration_s: 600.0
+    expected_ticks: 600
+    embedded_ticks: 600
+    warm_pipeline_s: 26.2784
+    real_time_multiple: 22.8325
+    embed_fps: 129.8599
+    peak_vram_gib: 1.6632
+    exact_score_ticks: 600
+    exact_score_latency_s: 0.1497
+    result_cache_hits: 0
+    model_revision: "75de2d55ec2d0b4efc50b3e9ad70dba96a7b2fa2"
+  b2:
+    status: "measured_passed"
+    fixture: "synthetic_throughput_structured_output"
+    semantic_measurement: false
+    model_revision: "ebb281ec70b05090aa6165b016eac8ec08e71b17"
+    quantization: "bitsandbytes-nf4-double-quant-bfloat16"
+    model_load_cold_s: 10.271354
+    warm_runs_total: 30
+    warm_median_4s_s: 10.330461
+    warm_median_12s_s: 15.567976
+    warm_median_30s_s: 18.47372
+    warm_p95_all_s: 24.011669
+    peak_vram_gib: 4.64121
+    minimum_vram_headroom_gib: 5.78125
+    retry_rate: 0.0
+    result_cache_hits: 0
+    failures: 0
+  b3: "not_yet_measured"
+  b4: "not_yet_measured"
+  b5:
+    status: "measured_passed"
+    parser: "deterministic-v1"
+    cold_latency_s: 0.0018214
+    warm_runs: 20
+    warm_median_s: 0.00016935
+    warm_p95_s: 0.0002549
+    result_cache_hits: 0
+    failures: 0
+  b6:
+    status: "measured_blocked"
+    fixture: "synthetic_throughput_latency_only"
+    semantic_measurement: false
+    warm_runs: 20
+    cold_retrieval_s: 7.065035
+    retrieval_feedback_median_s: 0.0890665
+    retrieval_feedback_p95_s: 0.2405479
+    result_cache_hits: 0
+    exact_scoring_completed: true
+    single_vertical_slice_verified_result_s: 20.408567
+    single_vertical_slice_passed: true
+    verified_ten_query_suite_s: null
+    blocker: "The required ten-query verified B6 run is not complete; one synthetic vertical slice passed."
+  b7: "not_yet_measured"

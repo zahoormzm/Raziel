@@ -1,0 +1,32 @@
+{
+  "_help_1": "GUIDANCE TEMPLATE — strip _help_* and replace FILL_.... Do NOT hand-write content_hash.",
+  "_help_2": "Seal with eval.schema.seal_manifest(...) to compute the immutable content_hash. Distinct from the ingestion VideoManifest contract (Member 1).",
+  "_help_3": "CONTRACT DEPENDENCY: source_sha256 must equal ingestion's streamed SHA-256 for the same file.",
+  "manifest_schema_version": "1.0.0",
+  "session_id": "FILL_session",
+  "scenario_id": "FILL_scenario_split_unit",
+  "pool": "FILL_staged_or_organizer",
+  "camera_ids": ["FILL_camera"],
+  "footage_files": [
+    {
+      "file_id": "FILL_file_id",
+      "camera_id": "FILL_camera",
+      "logical_path": "FILL_relative_reference",
+      "source_sha256": "FILL_64_hex_streamed_sha256",
+      "duration_s": 0.0,
+      "codec": "FILL",
+      "container": "FILL",
+      "declared_fps": 0.0,
+      "recording_start": null,
+      "timebase": null,
+      "synthetic": false
+    }
+  ],
+  "authorization": {"status": "FILL_authorized|pending|unauthorized", "consent_recorded": false,
+    "retention_policy": "FILL", "notes": "FILL"},
+  "provenance": {"collected_by": "FILL", "collection_date": "FILL_ISO_date",
+    "staged_scenario_description": "FILL_for_staged_pool", "organizer_delivery_ref": null},
+  "synthetic": false,
+  "notes": "FILL_optional",
+  "created_at": "FILL_ISO_timestamp"
+}
