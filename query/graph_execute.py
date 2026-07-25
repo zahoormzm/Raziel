@@ -905,11 +905,17 @@ def graph_pattern_from_payload(value: Any) -> GraphPattern:
         subject = str(item.get("subject_ref", item.get("subject_variable", "")))
         object_ref = str(item.get("object_ref", item.get("object_variable", "")))
         max_gap = item.get("max_gap_s")
-        if (
-            predicate in {"precedes", "follows"}
-            and max_gap is not None
-            and not raw.get("temporal_relations")
-        ):
+        if predicate in {"precedes", "follows"}:
+            # graph_pattern_payload emits every temporal relation twice: once in
+            # `temporal_relations` and once as a precedes predicate here. When
+            # both are present the predicate is a duplicate representation, not a
+            # graph edge -- turning it into an EdgeConstraint required an edge
+            # type GraphBuilder never writes (it emits only contains, co_occurs
+            # and belongs_to_track), so _binding_valid rejected every binding and
+            # any temporal query executed from a serialized pattern returned zero
+            # candidates.
+            if raw.get("temporal_relations"):
+                continue
             first_atom = subject.removeprefix("v_")
             second_atom = object_ref.removeprefix("v_")
             relation = "before"
@@ -920,7 +926,7 @@ def graph_pattern_from_payload(value: Any) -> GraphPattern:
                     first_atom=first_atom,
                     relation=relation,
                     second_atom=second_atom,
-                    max_gap_s=float(max_gap),
+                    max_gap_s=float(max_gap) if max_gap is not None else 600.0,
                 )
             )
         else:

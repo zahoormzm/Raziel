@@ -20,6 +20,13 @@ from query.schema import (
     unique_preserving_order,
 )
 
+# Episodes are produced by joining per-atom anchors. The join is allowed a
+# multiple of the requested episode cap so a legitimate result set is never
+# starved, while a pathological product still terminates. Hitting it marks the
+# assembly episode-cap-bound, which makes completeness False -- a truncated
+# search must never read as a complete one.
+_JOIN_BUDGET_FACTOR = 64
+
 
 @dataclass(frozen=True)
 class LabeledSubsegment:
@@ -144,9 +151,22 @@ def _make_episode(
         trace_id for candidate in candidates for trace_id in candidate.trace_ids
     )
     member_ids = tuple(candidate.candidate_id for candidate in candidates)
+    # The atom binding is part of the episode's identity. Without it, two
+    # episodes that bind the same candidate windows to different atoms collided
+    # in episodes_by_id and one was silently discarded -- while the completeness
+    # record still reported assembly_complete=True. api/pipeline.py builds anchors
+    # as {atom_id: [items where atom_id in item.atom_ids]}, so any candidate
+    # window carrying two atom_ids lands under both keys and hits this. A recall
+    # loss reported as a complete assembly is exactly what the truthfulness
+    # contract forbids.
     episode = CandidateWindowData(
         candidate_id=stable_identifier(
-            "episode", (plan.schema_version, member_ids)
+            "episode",
+            (
+                plan.schema_version,
+                member_ids,
+                tuple(atom_id for atom_id, _candidate in ordered),
+            ),
         ),
         video_id=first.video_id,
         camera_id=first.camera_id,
@@ -214,6 +234,7 @@ def assemble_temporal(
     qualifying = sum(len(values) for values in normalised.values())
     retained = qualifying  # no anchor pre-truncation is allowed
     rejected: list[AssemblyRejection] = []
+    join_budget_reached = False
     for relation in plan.temporal_relations:
         _pairs, relation_rejections = _relation_candidates(relation, normalised)
         rejected.extend(relation_rejections)
@@ -235,16 +256,30 @@ def assemble_temporal(
         if any(not normalised.get(atom_id) for atom_id in required_atoms):
             episodes = []
         else:
-            episodes = [
-                _make_episode(plan, dict(zip(required_atoms, combination)))
-                for combination in product(
-                    *(normalised[atom_id] for atom_id in required_atoms)
-                )
-                if _consistent_selection(
-                    dict(zip(required_atoms, combination)),
-                    plan.temporal_relations,
-                )
-            ]
+            # Bound the join rather than generate-then-truncate. The full product
+            # was materialised before max_episode_count applied, so a three-atom
+            # temporal query with 100 anchors per atom evaluated
+            # _consistent_selection a million times and built the whole list
+            # before the cap trimmed it -- the cap bounded the output, not the
+            # work. The sibling executor in query/graph_execute.py enforces its
+            # join_budget inside the loop for the same reason.
+            episodes = []
+            join_budget = (
+                max_episode_count * _JOIN_BUDGET_FACTOR
+                if max_episode_count is not None
+                else None
+            )
+            joins = 0
+            for combination in product(
+                *(normalised[atom_id] for atom_id in required_atoms)
+            ):
+                joins += 1
+                if join_budget is not None and joins > join_budget:
+                    join_budget_reached = True
+                    break
+                selection = dict(zip(required_atoms, combination))
+                if _consistent_selection(selection, plan.temporal_relations):
+                    episodes.append(_make_episode(plan, selection))
 
     # Equivalent episodes can arise when two relations share anchors.
     episodes_by_id = {
@@ -261,7 +296,7 @@ def assemble_temporal(
             ),
         )
     )
-    cap_bound = (
+    cap_bound = join_budget_reached or (
         max_episode_count is not None and len(all_episodes) > max_episode_count
     )
     returned = (

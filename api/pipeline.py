@@ -499,18 +499,27 @@ class LocalRetrievalPipeline:
                 )
                 for cluster in clusters
             ]
-            conclusion = (
-                ArchiveConclusion.SEARCH_INCOMPLETE
-                if unresolved or not search_complete
-                else ArchiveConclusion.NO_VERIFIED_MATCH
-            )
+            # No verifier is attached, so no required constraint was ever
+            # resolved. Even with zero clusters this cannot be a clean negative:
+            # NO_VERIFIED_MATCH asserts "searched and verified, found nothing",
+            # and reporting it here handed the caller a verified-looking absence
+            # claim from a system with no verifier. README states retrieval-only
+            # results cannot become verified matches and that an unverified
+            # search is never rendered as a clean no-match.
+            conclusion = ArchiveConclusion.SEARCH_INCOMPLETE
             return (
                 [],
                 [],
                 unresolved,
                 [],
                 VerificationSummary(
-                    state="system_failure" if unresolved else "complete",
+                    # The contract admits only complete|budget_reached|
+                    # system_failure. "complete" is unavailable here on the
+                    # merits: nothing was verified, so verification did not
+                    # complete -- it never ran. Reporting system_failure keeps
+                    # the summary consistent with the SEARCH_INCOMPLETE
+                    # conclusion above rather than claiming coverage we lack.
+                    state="system_failure",
                     clusters_total=len(clusters),
                     clusters_verified=0,
                     seconds_used=0.0,

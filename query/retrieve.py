@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import argparse
+from bisect import bisect_left
 from dataclasses import dataclass
 import json
 import math
-from typing import Iterable, Mapping, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 from query.schema import (
     CandidateWindowData,
@@ -145,18 +146,34 @@ def aggregate_channel(
         None if expected_tick_ids is None else tuple(expected_tick_ids)
     )
     exact = _validate_exact_ticks(channel.ticks, expected_ids)
+
+    # Bucket the ticks once per (video, camera) and bisect per window, instead of
+    # rescanning every tick for every window. The old scan was O(windows x ticks):
+    # a one-hour source at 1 fps produces ~3,600 ticks against ~1,800 windows
+    # across the three scales, i.e. ~6.5M comparisons per channel, repeated for
+    # the whole-query channel and every per-atom channel. This is O(T log T +
+    # W log T) and returns the identical set.
+    buckets: dict[tuple[str, str | None], list[Any]] = {}
+    for tick in channel.ticks:
+        buckets.setdefault((tick.video_id, tick.camera_id), []).append(tick)
+    for bucket in buckets.values():
+        bucket.sort(key=lambda tick: tick.pts)
+    bucket_pts = {key: [tick.pts for tick in value] for key, value in buckets.items()}
+
     candidates: list[CandidateWindowData] = []
     considered = 0
     for window in windows:
         if window.t1 <= window.t0:
             raise ValueError(f"window {window.window_id} has an invalid interval")
-        relevant = [
-            tick
-            for tick in channel.ticks
-            if tick.video_id == window.video_id
-            and tick.camera_id == window.camera_id
-            and window.t0 <= tick.pts < window.t1
-        ]
+        key = (window.video_id, window.camera_id)
+        bucket = buckets.get(key, ())
+        if bucket:
+            pts_list = bucket_pts[key]
+            lo = bisect_left(pts_list, window.t0)
+            hi = bisect_left(pts_list, window.t1)
+            relevant = bucket[lo:hi]
+        else:
+            relevant = []
         if not relevant:
             continue
         considered += 1

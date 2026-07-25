@@ -193,6 +193,23 @@ class GraphBuilder:
             (generation,),
         ).fetchone()
         if prior and prior["status"] == "complete":
+            # Re-point the active generation before returning. Without this the
+            # caller received this generation key while active_graph_generations
+            # still targeted a different one, so every subsequent query through
+            # active_evidence_nodes/active_evidence_edges read another
+            # generation's evidence -- and put_episode, which calls build_video
+            # precisely to populate the pointer, then rejected its own episode as
+            # "producer generation is not the active graph generation".
+            with self.store.connection:
+                self.store.connection.execute(
+                    """
+                    INSERT INTO active_graph_generations(video_id,generation_key)
+                    VALUES (?,?)
+                    ON CONFLICT(video_id) DO UPDATE
+                    SET generation_key=excluded.generation_key
+                    """,
+                    (video_id, generation),
+                )
             return GraphBuildStats(generation, 0, 0, resumed_complete=True)
         with self.store.connection:
             self.store.connection.execute(
