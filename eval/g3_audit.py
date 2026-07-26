@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -80,9 +81,25 @@ def _atom_span(plan: dict, atom_id: str) -> str:
     return ""
 
 
+def _tokens(value: str) -> list[str]:
+    return [token for token in re.split(r"[^a-z0-9]+", value.strip().lower()) if token]
+
+
 def _span_matches(actual: str, expected: str) -> bool:
-    """Substring match, both sides normalised. Tolerates 'black backpack' vs 'backpack'."""
-    return expected.strip().lower() in actual.strip().lower()
+    """Whole-token containment. Tolerates 'black backpack' vs 'backpack'.
+
+    Not a substring test. `expected in actual` accepted 'car' for an atom span
+    of 'carries', 'van' for 'advantage' and 'son' for 'person' -- the same defect
+    class that was fixed in evidence/predicates.py, sitting inside the harness
+    that certifies Gate G3. It also let a forbid_atom_spans guard fire on an
+    innocent substring. No assertion in the current 31-case set depended on the
+    loose behaviour, so this tightens the audit without changing its verdict.
+    """
+    actual_tokens = set(_tokens(actual))
+    expected_tokens = _tokens(expected)
+    return bool(expected_tokens) and all(
+        token in actual_tokens for token in expected_tokens
+    )
 
 
 def _any_span_matches(plan: dict, expected: str) -> bool:

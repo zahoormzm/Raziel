@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "raziel:data/schemas/footage_session_manifest.schema.json@1.0.0",
+  "$id": "raziel:data/schemas/footage_session_manifest.schema.json@1.1.0",
   "title": "Footage / Session Manifest (immutable, content-hashed)",
   "description": "Dataset-lane record of a collected footage session. This is NOT the ingestion VideoManifest contract owned by Member 1 (packages/contracts/video_manifest.py); it is the science-lane provenance and split-anchor record. It is immutable: `content_hash` is the SHA-256 over canonical JSON with the `content_hash` field omitted. Any edit changes the hash and is detectable. See data/ledger.md and RAZIEL_Master_Execution_Plan_v1.3.md \u00a721.5/\u00a726.1.",
   "type": "object",

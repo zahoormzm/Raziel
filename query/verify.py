@@ -599,23 +599,57 @@ def _finalize(
     cache_hit: bool,
 ) -> VerificationRun:
     pts = _pts_by_id(request.frames)
+
     # After a context recovery, `request` is the RESAMPLED bundle while
     # non-targeted constraints still cite frame ids validated against the
     # original one. VerificationRequest caps the bundle at 24 frames, so adding
     # context necessarily drops others, and a stale citation used to raise
-    # KeyError here -- crashing the whole verification instead of returning the
-    # result. A citation we can no longer resolve is dropped from the evidence
-    # PTS rather than fabricated; the constraint's own state is untouched.
+    # KeyError here, crashing the whole verification.
+    #
+    # Filtering the unresolvable ids away is not the fix either: it leaves a
+    # `supported` verdict with no traceable evidence behind it, which the
+    # ConstraintEvidence contract forbids for exactly this reason. A constraint
+    # whose evidence can no longer be resolved is not supported -- it is
+    # undetermined, which is the state that exists for "we did not reach a
+    # judgement". So the constraint is rewritten rather than quietly hollowed.
+    def _repair(item: ConstraintEvidence) -> ConstraintEvidence:
+        resolvable = [fid for fid in item.evidence_frame_ids if fid in pts]
+        if resolvable == list(item.evidence_frame_ids):
+            return item
+        if resolvable:
+            return item.model_copy(update={"evidence_frame_ids": resolvable})
+        if item.state in (EvidenceState.SUPPORTED, EvidenceState.CONTRADICTED):
+            return item.model_copy(
+                update={
+                    "state": EvidenceState.UNDETERMINED,
+                    "reason_code": "evidence_unresolvable_after_context_recovery",
+                    "evidence_frame_ids": [],
+                }
+            )
+        return item.model_copy(update={"evidence_frame_ids": []})
+
+    result = result.model_copy(
+        update={
+            "atoms": [_repair(item) for item in result.atoms],
+            "relations": [_repair(item) for item in result.relations],
+            "logic_groups": [_repair(item) for item in result.logic_groups],
+            # A matching interval whose endpoints are gone cannot be reported as
+            # a match; dropping it here keeps the reported intervals resolvable.
+            "matching_subintervals": [
+                item
+                for item in result.matching_subintervals
+                if item.start_frame_id in pts and item.end_frame_id in pts
+            ],
+        }
+    )
+
     evidence_pts = {
-        item.constraint_id: tuple(
-            pts[frame_id] for frame_id in item.evidence_frame_ids if frame_id in pts
-        )
+        item.constraint_id: tuple(pts[frame_id] for frame_id in item.evidence_frame_ids)
         for item in [*result.atoms, *result.relations, *result.logic_groups]
     }
     intervals = tuple(
         (pts[item.start_frame_id], pts[item.end_frame_id])
         for item in result.matching_subintervals
-        if item.start_frame_id in pts and item.end_frame_id in pts
     )
     return VerificationRun(
         result=result,

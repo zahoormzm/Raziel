@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import subprocess
 from pathlib import Path
@@ -150,11 +151,32 @@ class LocalExportService:
             return None
         if not directory.is_dir():
             return None
+        manifest_path = directory / "manifest.json"
         if kind == "manifest":
-            candidate = directory / "manifest.json"
-            return candidate if candidate.is_file() else None
-        clips = sorted(directory.glob("*.mp4"))
-        return clips[0] if clips else None
+            return manifest_path if manifest_path.is_file() else None
+
+        # Clips are written as `{mode}.mp4`. Globbing and taking the first match
+        # alphabetically would return evidence.mp4 for a preview request in any
+        # directory holding both. Each export_id currently gets a fresh directory
+        # with exactly one clip, so that is unreachable today -- but this is the
+        # restart-recovery path, and the manifest beside it records the mode
+        # exactly, so there is no reason to guess.
+        if manifest_path.is_file():
+            try:
+                mode = json.loads(manifest_path.read_text(encoding="utf-8")).get(
+                    "extraction_mode"
+                )
+            except (OSError, ValueError):
+                mode = None
+            if isinstance(mode, str) and mode:
+                candidate = directory / f"{mode}.mp4"
+                if candidate.is_file():
+                    return candidate
+        for mode in ("evidence", "preview"):
+            candidate = directory / f"{mode}.mp4"
+            if candidate.is_file():
+                return candidate
+        return None
 
     def _duration(self, path: Path) -> float:
         completed = subprocess.run(

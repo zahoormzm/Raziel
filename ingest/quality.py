@@ -68,6 +68,14 @@ def _gray_pixels(frame: Any) -> tuple[list[float], int, int]:
 def luminance(frame: Any) -> float:
     array = _gray_array(frame)
     if array is not None:
+        if array.size == 0:
+            # np.mean of an empty array is nan with a RuntimeWarning, where the
+            # pure-Python path raised ZeroDivisionError. A nan recorded into
+            # frames.luminance loses every later comparison silently: the window
+            # coverage query in evidence/graph_build.py tests `f.luminance>=?`,
+            # so the tick counts as observed but never assessable, quietly
+            # depressing assessable_ticks with no decode_failed record.
+            raise ValueError("frame has no pixels; cannot compute luminance")
         return float(array.mean())
     pixels, _, _ = _gray_pixels(frame)
     return sum(pixels) / len(pixels)

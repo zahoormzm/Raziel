@@ -114,6 +114,20 @@ class TestGateLogic(unittest.TestCase):
         for result in report["results"]:
             self.assertIsNone(result["parser_error"], f"{result['id']} crashed the parser")
 
+    def test_gate_is_currently_passing(self):
+        """RELEASE_STATUS.md records G3 as Passed; assert it unconditionally.
+
+        The neighbouring unsafe-failure test is conditional, so it passes
+        vacuously whenever the gate is healthy *and* whenever the scorer stops
+        detecting unsafe parses. Without this, a parser regression could drop the
+        score below threshold while CI stayed green and the release document kept
+        claiming a pass.
+        """
+        report = G.run_audit()
+        self.assertGreaterEqual(report["score"], report["pass_threshold"])
+        self.assertEqual(report["unsafe_failures"], 0)
+        self.assertTrue(report["gate_passed"])
+
     def test_unsafe_failure_blocks_the_gate_regardless_of_score(self):
         """A score above threshold must not carry the gate while a confident
         wrong parse stands. Plan 13.4 requires failures to be survivable, not

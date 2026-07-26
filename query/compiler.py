@@ -243,6 +243,16 @@ def graph_pattern_payload(compiled: CompiledQuery | GraphPattern) -> dict[str, A
                 "object_ref": second,
                 "required": True,
                 "max_gap_s": temporal.max_gap_s,
+                # `precedes` is also a legitimate stored edge predicate
+                # (evidence/predicates.py EDGE_PREDICATES, and the evidence_edges
+                # CHECK in GRAPH_SCHEMA), so a reader cannot tell this duplicate
+                # of temporal_relations apart from a real graph edge by predicate
+                # name alone. Marking the origin lets the reader drop the
+                # duplicate without closing off the genuine edge form.
+                "derived_from": "temporal_relation",
+                # Carried so a consumer reconstructing from predicates alone does
+                # not silently widen a same-actor constraint into order-only.
+                "same_actor_required": temporal.same_actor_required,
             }
         )
     return {

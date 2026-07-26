@@ -40,9 +40,15 @@ test = [
 # packages are declared explicitly. `namespaces = true` is required because
 # grounding/, ml/, and query/ are PEP 420 namespace packages with no __init__.py.
 [tool.setuptools.packages.find]
+# `tests` and `scripts` are deliberately absent: installing them would publish
+# two of the most collision-prone top-level names in the ecosystem into
+# site-packages, where another distribution shipping either name would shadow or
+# be shadowed depending on sys.path order. pytest finds them through
+# [tool.pytest.ini_options] testpaths and rootdir discovery without their being
+# installed packages, which is the documented workflow.
 include = [
   "api*", "eval*", "evidence*", "grounding*", "index*", "ingest*",
-  "ml*", "output*", "packages*", "query*", "scripts*", "tests*",
+  "ml*", "output*", "packages*", "query*",
 ]
 namespaces = true
 

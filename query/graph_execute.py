@@ -905,15 +905,19 @@ def graph_pattern_from_payload(value: Any) -> GraphPattern:
         subject = str(item.get("subject_ref", item.get("subject_variable", "")))
         object_ref = str(item.get("object_ref", item.get("object_variable", "")))
         max_gap = item.get("max_gap_s")
-        if predicate in {"precedes", "follows"}:
-            # graph_pattern_payload emits every temporal relation twice: once in
-            # `temporal_relations` and once as a precedes predicate here. When
-            # both are present the predicate is a duplicate representation, not a
-            # graph edge -- turning it into an EdgeConstraint required an edge
-            # type GraphBuilder never writes (it emits only contains, co_occurs
-            # and belongs_to_track), so _binding_valid rejected every binding and
-            # any temporal query executed from a serialized pattern returned zero
-            # candidates.
+        # graph_pattern_payload emits every temporal relation twice: once in
+        # `temporal_relations` and once as a precedes predicate here. Only the
+        # marked duplicates are reinterpreted; `precedes`/`follows` are also
+        # legitimate stored edge predicates (EDGE_PREDICATES, and the
+        # evidence_edges CHECK in GRAPH_SCHEMA), so an unmarked one from another
+        # producer must still be able to become an EdgeConstraint.
+        derived_temporal = item.get("derived_from") == "temporal_relation"
+        if derived_temporal:
+            # Already represented in temporal_relations; emitting it again as an
+            # edge would require an edge type GraphBuilder never writes (it emits
+            # only contains, co_occurs and belongs_to_track), so _binding_valid
+            # rejected every binding and any temporal query executed from a
+            # serialized pattern returned zero candidates.
             if raw.get("temporal_relations"):
                 continue
             first_atom = subject.removeprefix("v_")
@@ -921,12 +925,24 @@ def graph_pattern_from_payload(value: Any) -> GraphPattern:
             relation = "before"
             if predicate == "follows":
                 first_atom, second_atom = second_atom, first_atom
+            # Preserve the same-actor flag. Dropping it removes both the
+            # >30 s rejection in execute_pattern and the shared-tracklet
+            # requirement in _binding_valid, admitting bindings that were
+            # deliberately excluded -- a widening, not a narrowing.
+            same_actor = bool(item.get("same_actor_required", False))
+            if max_gap is not None:
+                gap = float(max_gap)
+            else:
+                # Never default past the ceiling the validator enforces for
+                # same-actor relations.
+                gap = 30.0 if same_actor else 600.0
             temporal.append(
                 TemporalRelation(
                     first_atom=first_atom,
                     relation=relation,
                     second_atom=second_atom,
-                    max_gap_s=float(max_gap) if max_gap is not None else 600.0,
+                    max_gap_s=gap,
+                    same_actor_required=same_actor,
                 )
             )
         else:

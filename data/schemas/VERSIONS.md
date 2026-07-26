@@ -33,9 +33,6 @@ These are enforced by `eval/schema.py` domain checks and covered by tests:
 1. **Manifest immutability** — recomputed `content_hash` must match the stored value.
 2. **Split discipline** — one `scenario_id` maps to exactly one split; a `session_id`
    never appears under two splits; staged, organizer, and external pools stay separate.
-10. **External-pool truth** — an `external` family's `ground_truth_source` is still
-    `human_ledger`. Third-party datasets supply *video only*; their annotations are
-    never imported as ground truth.
 3. **Interval cardinality** — `zero`→0 intervals, `one`→1, `many`→≥2; every `t1 >= t0`.
 4. **Paraphrase independence** — exactly two paraphrases with distinct `author_id`.
 5. **Retriever-truth prohibition** — `ground_truth_source` must be `human_ledger`;
@@ -49,12 +46,21 @@ These are enforced by `eval/schema.py` domain checks and covered by tests:
 9. **Adjudication ordering** — an `adjudication` record references exactly two `independent`
    records and its `recorded_at` is strictly after both of theirs; double-annotated
    independent passes are `blind=true`.
+10. **External-pool truth** — an `external` family's `ground_truth_source` is still
+    `human_ledger`. Third-party datasets supply *video only*; their annotations are
+    never imported as ground truth.
 
 ## Change policy
 
-A schema change is a versioned event: bump the `const` version, migrate every fixture,
-update this table and the affected cross-field checks, and re-run the owned test suite.
-No silent edits.
+A schema change is a versioned event: bump the `const` version **and the matching
+`$id` suffix**, migrate every fixture, update this table and the affected cross-field
+checks, and re-run the owned test suite. No silent edits.
+
+`$id` is called out explicitly because it drifted once: 1.1.0 bumped the `const` on
+`query_family` and `footage_session_manifest` while both `$id` values still ended in
+`@1.0.0`, so two distinct documents claimed one identifier. `eval/schema.py` resolves
+`$ref` by filename so nothing broke, but anything that caches or resolves by `$id`
+would have received the wrong contract.
 
 ## Change log
 

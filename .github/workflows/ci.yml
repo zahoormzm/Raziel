@@ -20,3 +20,20 @@ jobs:
           python -m compileall -q
           api data eval evidence grounding index ingest ml output packages query scripts tests
       - run: python -m pytest
+      # Gate G3 is recorded as Passed in RELEASE_STATUS.md. Nothing else in CI
+      # revalidates it: g3_audit.main() returns 0 without --strict, so a parser
+      # regression that drops the score or introduces an unsafe parse would
+      # otherwise leave CI green while the release document still claims a pass.
+      - run: python -m eval.g3_audit --strict --failures-only
+
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci --prefix site
+      # Nothing compiled the site, so a syntax error or a broken import shipped
+      # unnoticed.
+      - run: npm run build --prefix site

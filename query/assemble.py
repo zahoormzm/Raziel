@@ -27,6 +27,16 @@ from query.schema import (
 # search must never read as a complete one.
 _JOIN_BUDGET_FACTOR = 64
 
+# Applied when the caller supplies no episode cap. assemble_temporal's own
+# signature defaults max_episode_count to None, and the module CLI's
+# --episode-cap defaults to None, so before this the default path -- the one
+# most in need of a safety limit -- was the only path with no limit at all.
+_DEFAULT_JOIN_BUDGET = 200_000
+
+# Rejections are diagnostic output that assembly_result_payload serialises in
+# full. Cap what is retained.
+_MAX_REPORTED_REJECTIONS = 500
+
 
 @dataclass(frozen=True)
 class LabeledSubsegment:
@@ -99,15 +109,43 @@ def _ordered_pair(
 def _relation_candidates(
     relation: TemporalRelation,
     anchor_candidates: Mapping[str, tuple[CandidateWindowData, ...]],
-) -> tuple[list[tuple[CandidateWindowData, CandidateWindowData]], list[AssemblyRejection]]:
+    *,
+    scan_budget: int,
+    rejection_cap: int = _MAX_REPORTED_REJECTIONS,
+) -> tuple[
+    list[tuple[CandidateWindowData, CandidateWindowData]],
+    list[AssemblyRejection],
+    bool,
+]:
+    """Pair anchors for one relation under an explicit scan budget.
+
+    This scan is the dominant cost, not the episode product below it: it is
+    O(first x second) and previously ran to completion before any budget was
+    consulted, building one AssemblyRejection per invalid pair. With 700 anchors
+    per atom that materialised 490,000 rejection objects -- all of which
+    assembly_result_payload then serialises -- before the episode budget was
+    reached at 512 combinations. Bounding the product alone moved the
+    generate-then-truncate one loop earlier rather than removing it.
+
+    Rejections are also capped: they are diagnostic output, and retaining a
+    half-million of them helps nobody.
+    """
     pairs: list[tuple[CandidateWindowData, CandidateWindowData]] = []
     rejected: list[AssemblyRejection] = []
+    scanned = 0
+    truncated = False
     for first in anchor_candidates.get(relation.first_atom, ()):
+        if truncated:
+            break
         for second in anchor_candidates.get(relation.second_atom, ()):
+            scanned += 1
+            if scanned > scan_budget:
+                truncated = True
+                break
             valid, reason = _ordered_pair(first, second, relation)
             if valid:
                 pairs.append((first, second))
-            else:
+            elif len(rejected) < rejection_cap:
                 rejected.append(
                     AssemblyRejection(
                         first_candidate_id=first.candidate_id,
@@ -115,7 +153,7 @@ def _relation_candidates(
                         reason=reason or "join_rejected",
                     )
                 )
-    return pairs, rejected
+    return pairs, rejected, truncated
 
 
 def _consistent_selection(
@@ -235,9 +273,17 @@ def assemble_temporal(
     retained = qualifying  # no anchor pre-truncation is allowed
     rejected: list[AssemblyRejection] = []
     join_budget_reached = False
+    join_budget = (
+        max_episode_count * _JOIN_BUDGET_FACTOR
+        if max_episode_count is not None
+        else _DEFAULT_JOIN_BUDGET
+    )
     for relation in plan.temporal_relations:
-        _pairs, relation_rejections = _relation_candidates(relation, normalised)
+        _pairs, relation_rejections, scan_truncated = _relation_candidates(
+            relation, normalised, scan_budget=join_budget
+        )
         rejected.extend(relation_rejections)
+        join_budget_reached = join_budget_reached or scan_truncated
 
     if not plan.temporal_relations:
         episodes = [
@@ -264,17 +310,12 @@ def assemble_temporal(
             # work. The sibling executor in query/graph_execute.py enforces its
             # join_budget inside the loop for the same reason.
             episodes = []
-            join_budget = (
-                max_episode_count * _JOIN_BUDGET_FACTOR
-                if max_episode_count is not None
-                else None
-            )
             joins = 0
             for combination in product(
                 *(normalised[atom_id] for atom_id in required_atoms)
             ):
                 joins += 1
-                if join_budget is not None and joins > join_budget:
+                if joins > join_budget:
                     join_budget_reached = True
                     break
                 selection = dict(zip(required_atoms, combination))

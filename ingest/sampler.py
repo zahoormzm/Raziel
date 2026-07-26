@@ -110,6 +110,20 @@ CREATE TABLE IF NOT EXISTS windows (
     t0 REAL NOT NULL,
     t1 REAL NOT NULL
 );
+-- Collapse duplicate window rows before asserting uniqueness. This schema is
+-- applied with executescript on every ExpectedTickLedger and GraphStore
+-- construction, so without this DELETE the CREATE UNIQUE INDEX below raises
+-- IntegrityError on any archive that was re-ingested under the old code, the
+-- script aborts at that statement, and the database becomes unopenable by
+-- ingest, graph build and the query pipeline -- bricking exactly the archives
+-- the index exists to protect. Keeping MIN(rowid) preserves the first-written
+-- window, which is the one INSERT OR IGNORE would have kept had the constraint
+-- existed. Any evidence graph built over the duplicates should be regenerated;
+-- its window nodes were duplicated for the same reason.
+DELETE FROM windows
+WHERE rowid NOT IN (
+    SELECT MIN(rowid) FROM windows GROUP BY video_id, scale_s, t0, t1
+);
 -- Without this, `INSERT OR IGNORE INTO windows` has no conflict target to
 -- ignore, so re-ingesting a source appended a full duplicate set of windows
 -- (19 -> 38 -> 57 rows across three runs). Re-running ingest is the documented

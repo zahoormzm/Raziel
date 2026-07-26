@@ -125,11 +125,11 @@ and bounded counts are certifiable only inside a continuous observation
 interval, and `eval.schema._track_logic_safety_errors` depends on that meaning.
 `camera_time_interval` is silent about the property that makes the claim safe.
 
-This decision is **not yet applied in code.** `camera_time_interval` remains in
-`query/parser.py` and `query/schema.py`, which are Member 2's lane. Per §26.2.7
-the rename proceeds as a contract request coordinated by Member 5:
-[`data/contract_requests/CR-001-continuous-camera-interval.md`](data/contract_requests/CR-001-continuous-camera-interval.md).
-Schema 1.0 must not be frozen until the rename lands and both lanes are green.
+**Applied in code (2026-07-26).** The rename landed in `query/parser.py` and
+`query/schema.py`; no occurrence of `camera_time_interval` remains in any source
+file. Recorded in
+[`data/contract_requests/CR-001-continuous-camera-interval.md`](data/contract_requests/CR-001-continuous-camera-interval.md),
+which is closed. Schema 1.0 is no longer blocked on this item.
 
 ## External work needed for release
 

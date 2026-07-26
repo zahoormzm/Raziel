@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "raziel:data/schemas/query_family.schema.json@1.0.0",
+  "$id": "raziel:data/schemas/query_family.schema.json@1.1.0",
   "title": "Query family",
   "description": "One evaluation query family. A family has a canonical query plus exactly two INDEPENDENTLY written paraphrases (variants are not independent families, \u00a721.3). It carries the declared scope, zero/one/many ground-truth intervals, atom/relation/logic labels, typed challengers, assessability and boundary labels, and track/logic ground truth. Test ground truth is human-derived and never from retriever proposals. Empty-set (cardinality=zero) families require full human review of the declared scope. Composes the other data/schemas/*.schema.json via $ref. See RAZIEL_Master_Execution_Plan_v1.3.md \u00a721.3, \u00a721.5.",
   "type": "object",
