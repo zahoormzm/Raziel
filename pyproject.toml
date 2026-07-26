@@ -27,6 +27,11 @@ test = [
   "httpx>=0.28,<1",
   "pillow>=12,<13",
   "av>=15.1,<16",
+  # ingest/quality.py needs NumPy to read a PIL image; PyAV decoding yields PIL
+  # images, so the evidence-frame test exercises that path. NumPy is already a
+  # core dependency (requirements/core.lock) and, like `av`, was simply absent
+  # from the extra CI installs.
+  "numpy>=2,<3",
 ]
 
 # The repository is a flat layout with many non-package top-level directories

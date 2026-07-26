@@ -35,7 +35,14 @@ def _gray_pixels(frame: Any) -> tuple[list[float], int, int]:
         return array.ravel().tolist(), int(width), int(height)
 
     if not isinstance(frame, Sequence) or not frame:
-        raise ValueError("frame must be a non-empty nested sequence")
+        # Name the real cause. The pure-Python path only understands nested
+        # sequences, so anything array-like (a PIL image, a decoded AV frame)
+        # reaches here precisely because NumPy is missing -- and reporting
+        # "must be a nested sequence" for a PIL image points away from that.
+        raise ValueError(
+            f"cannot read a {type(frame).__name__} frame without NumPy installed; "
+            "the pure-Python fallback accepts only a non-empty nested sequence"
+        )
     rows = list(frame)
     width = len(rows[0])
     if width == 0 or any(len(row) != width for row in rows):
