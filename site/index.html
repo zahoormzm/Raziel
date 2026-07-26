@@ -11,6 +11,32 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <!-- The page is client-rendered, so #root is empty without JavaScript.
+           This is not the full content; it is enough that a non-JS reader gets
+           the claim and a pointer rather than a blank page. Prerendering the
+           whole thing is the real fix and is not done yet. -->
+      <div style="max-width:38rem;margin:4rem auto;padding:0 1.5rem;font-family:Georgia,serif;line-height:1.6">
+        <h1 style="font-weight:400">RAZIEL — Temporal Evidence Intelligence</h1>
+        <p>
+          A local-first system that searches a declared scope of recorded surveillance
+          footage in natural language for zero, one, or many supported occurrences of a
+          description — and reports when it <em>cannot see</em>, rather than guessing.
+        </p>
+        <p>
+          Every required constraint resolves independently to <strong>supported</strong>,
+          <strong>contradicted</strong>, <strong>unobservable</strong>, or
+          <strong>undetermined</strong>. A budget-truncated search is never rendered as a
+          clean no-match, and visible absence is only certifiable inside a continuous,
+          assessable interval.
+        </p>
+        <p>
+          This page needs JavaScript for the full content. The measured results and gate
+          status it displays are also recorded in <code>RELEASE_STATUS.md</code> in the
+          repository.
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

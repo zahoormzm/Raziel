@@ -805,11 +805,32 @@ def deterministic_parse(
         return unsupported
 
     atoms = _extract_atoms(text)
+    # Keep the atoms derived directly from the request. _parse_logic may append
+    # a synthetic composite (the negated-actor visible_none target, whose span
+    # concatenates every noun in the query), and _find_atom matches on any token,
+    # so that composite was returned as both subject and object for every
+    # relation -- which _extract_relations then dropped via its obj != subject
+    # guard, leaving the plan with no relations at all. Binding relations to the
+    # request-derived atoms keeps the visible_none group and the relation
+    # structure, and stops the outcome depending on atom ordering.
+    request_atoms = list(atoms)
     atoms, logic, logic_error = _parse_logic(text, atoms, query_filters)
     if logic_error:
         return logic_error
-    relations = _extract_relations(text, atoms)
-    temporal = _extract_temporal(text, atoms)
+    # _parse_logic does not only append: the bounded-OR path rebuilds the atom
+    # list, so a relation binding a request atom can reference an id that no
+    # longer exists. Keep only relations whose endpoints survived.
+    surviving = {atom.atom_id for atom in atoms}
+    relations = [
+        relation
+        for relation in _extract_relations(text, request_atoms)
+        if relation.subject_atom in surviving and relation.object_atom in surviving
+    ]
+    temporal = [
+        item
+        for item in _extract_temporal(text, request_atoms)
+        if item.first_atom in surviving and item.second_atom in surviving
+    ]
     plan = QueryPlanData(
         query_text=text.strip(),
         atoms=tuple(atoms),

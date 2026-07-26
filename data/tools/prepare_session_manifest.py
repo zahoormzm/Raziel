@@ -191,6 +191,19 @@ def session_files(plan: dict, entry: dict) -> list[Path]:
 # Build
 # --------------------------------------------------------------------------- #
 
+def _authorization_notes(args: argparse.Namespace, entry: dict) -> str:
+    """Free-text notes, with external-pool provenance recorded verbatim."""
+    base = args.authorization_notes or ""
+    if entry.get("pool") != "external":
+        return base
+    recorded = (
+        f"source={args.source_name}; url={args.source_url}; "
+        f"licence={args.source_licence}; consent_basis={args.consent_basis}; "
+        f"licence_checked_on={args.licence_checked_on}"
+    )
+    return f"{base} | {recorded}".strip(" |")
+
+
 def build_manifest(plan: dict, entry: dict, args: argparse.Namespace) -> tuple[dict, list[str]]:
     """Return (sealed manifest, warnings). Raises SystemExit on a hard failure."""
     ffprobe = find_ffprobe()
@@ -268,7 +281,7 @@ def build_manifest(plan: dict, entry: dict, args: argparse.Namespace) -> tuple[d
             "status": args.authorization_status,
             "consent_recorded": bool(args.consent_recorded),
             "retention_policy": args.retention_policy,
-            "notes": args.authorization_notes or "",
+            "notes": _authorization_notes(args, entry),
         },
         "provenance": {
             "collected_by": args.collected_by,
@@ -287,21 +300,39 @@ def build_manifest(plan: dict, entry: dict, args: argparse.Namespace) -> tuple[d
         )
 
     if entry["pool"] == "external":
-        # External footage is a generalization probe: their video, our labels.
-        # The licence and consent basis are the provenance, so they must be written down.
-        notes = (args.authorization_notes or "").lower()
-        if not all(k in notes for k in ("licence", "source")) and not all(
-            k in notes for k in ("license", "source")
-        ):
-            warnings.append(
-                "external pool: --authorization-notes should record the source name, URL, "
-                "licence, consent basis, and the date you checked them. "
-                "Person 5 verifies the licence directly, not from any summary."
+        # External footage is other people's video. Its licence and consent basis
+        # ARE its provenance, so these block rather than warn -- a warning is
+        # satisfied by ignoring it, and a sealed manifest asserting authorization
+        # over footage whose source is unrecorded is exactly the claim this tool
+        # exists to prevent. Dedicated flags, not substring-matched free text:
+        # the old check passed if the words "licence" and "source" appeared
+        # anywhere in any order.
+        missing = [
+            name
+            for name, value in (
+                ("--source-name", args.source_name),
+                ("--source-url", args.source_url),
+                ("--source-licence", args.source_licence),
+                ("--consent-basis", args.consent_basis),
+                ("--licence-checked-on", args.licence_checked_on),
             )
+            if not value
+        ]
+        if missing:
+            raise SystemExit(
+                "external pool: refusing to seal without recorded provenance.\n"
+                f"  missing: {', '.join(missing)}\n"
+                "Person 5 reads the actual licence and consent documentation before\n"
+                "downloading, and records what was found. Do not rely on a summary,\n"
+                "including one written inside this repository."
+            )
+        if not _ISO_DATE.match(args.licence_checked_on):
+            raise SystemExit("--licence-checked-on must be an ISO date, YYYY-MM-DD")
         if "PLACEHOLDER" in entry.get("staged_scenario_description", ""):
-            warnings.append(
-                "external pool: session_plan.json still holds the PLACEHOLDER description. "
-                "Replace it with the real source, licence, and consent basis before sealing."
+            raise SystemExit(
+                "external pool: session_plan.json still holds the PLACEHOLDER description "
+                f"for {entry['session_id']}. Replace it with the real source, licence and "
+                "consent basis before sealing."
             )
 
     return S.seal_manifest(manifest), warnings
@@ -381,6 +412,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--authorization-notes", default=None)
     parser.add_argument("--organizer-delivery-ref", default=None)
+    # External-pool provenance. Required to seal an external session; see
+    # build_manifest. Recorded into authorization.notes so the sealed manifest
+    # carries the licence basis rather than a free-text assurance.
+    parser.add_argument("--source-name", default=None, help="external: dataset/source name")
+    parser.add_argument("--source-url", default=None, help="external: source URL")
+    parser.add_argument("--source-licence", default=None, help="external: licence identifier")
+    parser.add_argument("--consent-basis", default=None,
+                        help="external: how the source documented participant consent")
+    parser.add_argument("--licence-checked-on", default=None,
+                        help="external: ISO date you read the licence yourself")
     parser.add_argument("--recording-start", default=None,
                         help="Absolute recording start if known; never inferred")
     parser.add_argument("--notes", default=None)

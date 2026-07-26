@@ -16,6 +16,11 @@ def canonical_json(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
+# Path-segment length for content-addressed artifact directories. See
+# ArtifactGeneration.directory for why this is shorter than the digest.
+_PATH_SEGMENT_CHARS = 32
+
+
 def content_key(value: Any) -> str:
     return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
@@ -48,7 +53,30 @@ class ArtifactGeneration:
         )
 
     def directory(self, root: str | Path) -> Path:
-        return Path(root) / self.kind / self.key
+        """Content-addressed directory for this generation.
+
+        The path segment is a prefix of the key, not the whole digest. Windows
+        caps a path at 260 characters unless long paths are explicitly enabled,
+        and a 64-character segment spends a quarter of that budget on one
+        directory name -- with the store's own files nested below it and the
+        project root above it. `stable_identifier` already truncates for the same
+        reason. 32 hex characters is 128 bits, so a collision between two
+        generations is not a practical concern.
+
+        `key` itself is deliberately left at full length: it is written into
+        store metadata and compared on reopen (see VersionedEmbeddingStore), so
+        shortening it would invalidate every existing store's identity rather
+        than merely relocating it.
+        """
+        root_path = Path(root)
+        short = root_path / self.kind / self.key[:_PATH_SEGMENT_CHARS]
+        if not short.exists():
+            # Adopt a generation written before the segment was shortened rather
+            # than silently rebuilding it under the new name.
+            legacy = root_path / self.kind / self.key
+            if legacy.exists():
+                return legacy
+        return short
 
 
 class VersionedEmbeddingStore:
