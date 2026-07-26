@@ -63,10 +63,12 @@ export function Hero() {
             <div>
               Indexes at
               <b>22.8× real time</b>
+              <i>synthetic source</i>
             </div>
             <div>
               Parser correctness
               <b>96.8%, zero unsafe</b>
+              <i>own 31-query set</i>
             </div>
           </Reveal>
         </div>
@@ -265,8 +267,12 @@ export function Contract() {
           <p className="eyebrow">Truthfulness contract</p>
           <h2>What the system is allowed to claim</h2>
           <p>
-            These are not aspirations in a README. Each one is enforced by validators and
-            covered by the test suite, because a guarantee nobody checks is a preference.
+            A guarantee nobody checks is a preference, so each of these is tied to
+            something that runs: the schema validators in{" "}
+            <code style={{ fontFamily: "var(--mono)", fontSize: "0.85em" }}>eval/schema.py</code>,
+            the contract models, or a test in the suite. Where a claim rests on a gate that
+            is still open, the table above says which one — it is the honest half of the
+            same page.
           </p>
         </Reveal>
 

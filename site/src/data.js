@@ -1,10 +1,18 @@
-// Every number here is a measured result read from this repository's own
-// benchmark reports. Nothing is estimated, rounded up, or invented. Where a
-// thing has not been measured, it says so.
+// Every number here is a measured result. Nothing is estimated, rounded up, or
+// invented. Where a thing has not been measured, it says so.
 //
-// Sources: artifacts/b1/report.json, artifacts/b2/report.json,
-// artifacts/b5/report.json, artifacts/b6/report.json,
-// eval/reports/g3_audit.json, RELEASE_STATUS.md
+// PROVENANCE. The benchmark reports these figures come from live under
+// artifacts/, which is gitignored -- recorded footage and model outputs do not
+// belong in git history. So the citable source for anyone who clones this
+// repository is RELEASE_STATUS.md, which is tracked and carries every figure
+// below in its "Measured hardware results" and "Gate status" tables.
+//
+// Tracked source of record : RELEASE_STATUS.md
+// Tracked, machine-readable: eval/reports/g3_audit.json  (the 96.8% G3 figure)
+// Local-only originals     : artifacts/b1, b2, b3, b5/report.json
+//
+// B3 is the source of the rejectedLane block below. B6 contributes nothing --
+// it is Open, and no figure here derives from it.
 
 export const evidenceStates = [
   {
@@ -51,7 +59,7 @@ export const stages = [
   {
     name: "Assemble",
     title: "Build episodes across windows",
-    body: "Ordered events are joined into episodes within one camera and session, respecting maximum gaps. The join is bounded, and hitting that bound is recorded rather than hidden.",
+    body: "Ordered events are joined into episodes within one camera and session, respecting maximum gaps. Both the pair scan and the episode join run under an explicit budget that applies whether or not the caller supplies an episode cap, and exhausting either marks the assembly incomplete.",
     guardLabel: "Records",
     guard: "A truncated assembly is reported incomplete. It can never read as a complete search that found nothing.",
   },
@@ -72,7 +80,7 @@ export const stages = [
   {
     name: "Export",
     title: "Leave a traceable record",
-    body: "An evidence clip is cut on keyframe boundaries with a manifest recording source hash, output hash, model revisions, operating point, and the exact interval extracted.",
+    body: "A preview clip seeks on the input side and may align to the preceding keyframe; an evidence clip seeks on the output side and re-encodes so the interval is frame-accurate. Both carry a manifest recording source hash, output hash, model revisions, operating point, and the exact interval extracted.",
     guardLabel: "Claims",
     guard: "A traceable extraction record. Not a claim of legal admissibility or tamper-proofness.",
   },

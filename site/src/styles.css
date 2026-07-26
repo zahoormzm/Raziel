@@ -7,7 +7,13 @@
   --paper-sunk: #f3f1ec;
   --ink: #16150f;
   --ink-soft: #4a483f;
-  --ink-faint: #8b887c;
+  /* Was #8b887c = 3.41:1, the only token on the page below WCAG AA 4.5:1 --
+     and the colour of the "Open" gate pills, the metric footnotes and the
+     footer disclaimer. Four of nine gates are Open, so the honest
+     not-yet-proven statuses were rendered faintest while "Passed" got a fully
+     compliant green: the inverse of what the truthfulness contract is for.
+     #757166 = 4.67:1, still visibly quieter than --ink-soft. */
+  --ink-faint: #757166;
   --rule: #e2ded4;
   --accent: #a8601f;
   --accent-soft: #f0e4d6;
@@ -35,7 +41,8 @@
     --paper-sunk: #141416;
     --ink: #eceae4;
     --ink-soft: #a5a29a;
-    --ink-faint: #6d6a63;
+    /* Was #6d6a63 = 3.60:1. #8b877e = 5.42:1. */
+    --ink-faint: #8b877e;
     --rule: #25252a;
     --accent: #cf8f4d;
     --accent-soft: #2a2119;
@@ -181,6 +188,14 @@ section:first-of-type {
   }
 }
 
+/* Keyboard focus. The sheet previously styled focus on the stage buttons only,
+   leaving every nav and in-page link with whatever the UA happened to draw. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 /* ---------- nav ---------- */
 
 .nav {
@@ -257,9 +272,31 @@ section:first-of-type {
   transform: scaleX(1);
 }
 
+/* The links used to be display:none below 46rem, removing site navigation on
+   phones outright. They now wrap and scroll instead of disappearing. */
 @media (max-width: 46rem) {
+  .nav-inner {
+    height: auto;
+    padding-block: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+
   .nav-links {
+    order: 3;
+    width: 100%;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
     display: none;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
   }
 }
 
@@ -310,6 +347,16 @@ section:first-of-type {
   color: var(--ink-faint);
   padding-top: 2rem;
   border-top: 1px solid var(--rule);
+}
+
+.hero-meta i {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  font-style: normal;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+  margin-top: 0.2rem;
 }
 
 .hero-meta b {
